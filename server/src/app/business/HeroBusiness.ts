@@ -26,10 +26,12 @@ class HeroBusiness implements IHeroBusiness {
     update (_id: string, item: IHeroModel, callback: (error: any, result: any) => void) {
 
         this._heroRepository.findById(_id, (err, res) => {
-            if(err) callback(err, res);
-
-            else
-                this._heroRepository.update(res._id, item, callback);
+            if(err) 
+				callback(err, res);
+				
+            else {
+                this._heroRepository.update(res._id, item, callback); 
+				}
 
         });
     }

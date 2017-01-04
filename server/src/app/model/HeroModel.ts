@@ -22,7 +22,6 @@ class HeroModel {
     get amountPeopleSaved (): number {
         return this._heroModel.amountPeopleSaved;
     }
-    
 }
 Object.seal(HeroModel);
 export =  HeroModel;
