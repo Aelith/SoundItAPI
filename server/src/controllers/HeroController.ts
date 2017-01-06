@@ -4,8 +4,10 @@
 
 import express = require("express");
 import HeroBusiness = require("./../app/business/HeroBusiness");
-import IBaseController = require("./BaseController");
+import IBaseController = require("./interfaces/BaseController");
 import IHeroModel = require("./../app/model/interfaces/HeroModel");
+import logger = require("./../tools/Logger");
+
 
 class HeroController implements IBaseController <HeroBusiness> {
 
@@ -15,13 +17,18 @@ class HeroController implements IBaseController <HeroBusiness> {
             var hero: IHeroModel = <IHeroModel>req.body;
             var heroBusiness = new HeroBusiness();
             heroBusiness.create(hero, (error, result) => {
-                if(error) res.send({"error": "error"});
-                else res.send({"success": "success"});
+                if(error)
+                {
+                    logger.warn("Create : error", {"error": error}, hero);
+                    res.status(400).send({"result": "Bad Request"});
+                }
+                else
+                    res.status(201).send({"result": "Created", "data": result});
             });
         }
         catch (e)  {
-            console.log(e);
-            res.send({"error": "error in your request"});
+            logger.error("create : error", {"error": e});
+            res.status(400).send({"result": "Bad Request"});
 
         }
     }
@@ -31,13 +38,18 @@ class HeroController implements IBaseController <HeroBusiness> {
             var _id: string = req.params._id;
             var heroBusiness = new HeroBusiness();
             heroBusiness.update(_id, hero, (error, result) => {
-                if(error) res.send({"error": "error"});
-                else res.send({"success": "success"});
+                if(error)
+                {
+                    logger.warn("Update : error", {"error": error}, hero);
+                    res.status(400).send({"result": "Bad Request"});
+                }
+                else
+                    res.status(200).send({"result": "Updated", "data": result});
             });
         }
         catch (e)  {
-            console.log(e);
-            res.send({"error": "error in your request"});
+            logger.error("update : error", {"error": e});
+            res.status(400).send({"result": "Bad Request"});
 
         }
     }
@@ -47,13 +59,18 @@ class HeroController implements IBaseController <HeroBusiness> {
             var _id: string = req.params._id;
             var heroBusiness = new HeroBusiness();
             heroBusiness.delete(_id, (error, result) => {
-                if(error) res.send({"error": "error"});
-                else res.send({"success": "success"});
+                if(error)
+                {
+                    logger.warn("Delete : error", {"error": error});
+                    res.status(400).send({"result": "Bad Request"});
+                }
+                else
+                    res.status(200).send({"result": "Deleted", "data": result});
             });
         }
         catch (e)  {
-            console.log(e);
-            res.send({"error": "error in your request"});
+            logger.error("delete : error", {"error": e});
+            res.status(400).send({"result": "Bad Request"});
 
         }
     }
@@ -62,13 +79,17 @@ class HeroController implements IBaseController <HeroBusiness> {
 
             var heroBusiness = new HeroBusiness();
             heroBusiness.retrieve((error, result) => {
-                if(error) res.send({"error": "error"});
+                if(error)
+                {
+                    logger.warn("Retrieve : error", {"error": error});
+                    res.status(400).send({"result": "Bad Request"});
+                }
                 else res.send(result);
             });
         }
         catch (e)  {
-            console.log(e);
-            res.send({"error": "error in your request"});
+            logger.error("retrieve : error", {"error": e});
+            res.status(400).send({"result": "Bad Request"});
 
         }
     }
@@ -78,13 +99,17 @@ class HeroController implements IBaseController <HeroBusiness> {
             var _id: string = req.params._id;
             var heroBusiness = new HeroBusiness();
             heroBusiness.findById(_id, (error, result) => {
-                if(error) res.send({"error": "error"});
+                if(error)
+                {
+                    logger.warn("findById : error", {"error": error});
+                    res.status(400).send({"result": "Bad Request"});
+                }
                 else res.send(result);
             });
         }
         catch (e)  {
-            console.log(e);
-            res.send({"error": "error in your request"});
+            logger.error("findById : error", {"error": e});
+            res.status(400).send({"result": "Bad Request"});
 
         }
     }

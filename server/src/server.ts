@@ -1,13 +1,14 @@
 /// <reference path="../typings/index.d.ts" />
 
 import express 			= require('express');
-import BaseRoutes 	= require("./config/routes/Routes");
-import bodyParser 	= require("body-parser");
-import path 				= require('path');
+import BaseRoutes 	    = require("./config/routes/Routes");
+import bodyParser 	    = require("body-parser");
+import path 			= require('path');
+import compression      = require('compression');
 
 
 var port	: number 	= process.env.PORT || 3000;
-var env		: string 		= process.env.NODE_ENV || 'developement';
+var env		: string 	= process.env.NODE_ENV || 'developement';
 
 
 var app 	= express();
@@ -18,6 +19,7 @@ app.set('port', port);
 app.use(express.static(path.resolve(__dirname, '../../node_modules')));
 
 app.use(bodyParser.json());
+app.use(compression());
 
 app.use('/api', new BaseRoutes().routes);
 

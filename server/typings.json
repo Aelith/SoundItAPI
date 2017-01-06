@@ -5,5 +5,9 @@
     "mime": "registry:dt/mime#0.0.0+20160316155526",
     "node": "registry:dt/node#6.0.0+20160608083720",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
+  },
+  "dependencies": {
+    "bunyan": "registry:dt/bunyan#0.0.0+20161126172310",
+    "compression": "registry:dt/compression#0.0.0+20160725212620"
   }
 }
