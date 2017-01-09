@@ -7,7 +7,7 @@
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
   },
   "dependencies": {
-    "bunyan": "registry:dt/bunyan#0.0.0+20161126172310",
-    "compression": "registry:dt/compression#0.0.0+20160725212620"
+    "compression": "registry:dt/compression#0.0.0+20160725212620",
+    "winston": "registry:dt/winston#2.2.0+20170106144044"
   }
 }

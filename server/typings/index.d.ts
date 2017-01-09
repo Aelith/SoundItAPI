@@ -6,5 +6,5 @@
 /// <reference path="manual/body-parser/body-parser.d.ts" />
 /// <reference path="manual/method-override/method-override.d.ts" />
 /// <reference path="manual/mongoose/mongoose.d.ts" />
-/// <reference path="modules/bunyan/index.d.ts" />
 /// <reference path="modules/compression/index.d.ts" />
+/// <reference path="modules/winston/index.d.ts" />
