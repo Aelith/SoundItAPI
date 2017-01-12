@@ -13,6 +13,12 @@
     npm run deploy       <= start the Nodemon and watch for changes.
 ```
 
+## Add new module dependency
+```
+    npm install mon-module --save
+    npm install @types/mon-module --save
+```
+
 ## Directory Structure
 
 ```
@@ -21,46 +27,53 @@ SoundItAPI
     ├── server
     │    ├── src
     │    │    ├── app
-    │    │    │    ├── business                    <= business logic for application
+    │    │    │    ├── business                        <= business logic for application
     │    │    │    │    ├── common
-    │    │    │    │    │    ├── Read.ts           <= common Read method
-    │    │    │    │    │    ├── Write.ts          <= common Write method
+    │    │    │    │    │    ├── Read.ts               <= common Read method
+    │    │    │    │    │    ├── Write.ts              <= common Write method
     │    │    │    │    ├── interfaces
     │    │    │    │    │    ├── HeroBusiness.ts
     │    │    │    │    │    ├── BaseBusiness.ts
     │    │    │    │    ├── HeroBusiness.ts
     │    │    │    ├── dataAccess
-    │    │    │    │    ├── schemas
-    │    │    │    │    │    ├── HeroSchema.ts    <= Hero Schema for MongoDB
-    │    │    │    │    ├── DataAccess.ts         <= Connection with MongoDB
+    │    │    │    │    ├── mongo    
+    │    │    │    │    │    ├── schemas
+    │    │    │    │    │    │    ├── HeroSchema.ts    <= Hero Schema for MongoDB
+    │    │    │    │    │    ├── DataAccessMongo.ts    <= Connection with MongoDB
+    │    │    │    │    ├── postgres     
     │    │    │    ├── model
-    │    │    │    │    ├── interfaces
+    │    │    │    │    ├── mongo  
+    │    │    │    │    │    ├── interfaces
+    │    │    │    │    │    │    ├── HeroModel.ts
     │    │    │    │    │    ├── HeroModel.ts
-    │    │    │    │    ├── HeroModel.ts
+    │    │    │    │    ├── postgres        
     │    │    │    ├── repository
-    │    │    │    │    ├── common
-    │    │    │    │    │    ├── Read.ts           <= common Read method
-    │    │    │    │    │    ├── Write.ts  
-    │    │    │    │    ├── interfaces
+    │    │    │    │    ├── mongo  
+    │    │    │    │    │    ├── interfaces
+    │    │    │    │    │    │    ├── Read.ts           <= common Read method
+    │    │    │    │    │    │    ├── Write.ts          <= common Write method
     │    │    │    │    │    ├── BaseRepository.ts
-    │    │    │    │    ├── HeroRepository.ts
+    │    │    │    │    │    ├── HeroRepository.ts
+    │    │    │    │    ├── postgres
     │    │    ├── config
     │    │    │    ├── constants
-    │    │    │    │    ├── constants.ts         <= Constants - mongodb connection string.
+    │    │    │    │    ├── constants.ts                <= Constants - mongodb connection string.
     │    │    │    ├── routes
-    │    │    │    │    ├── HeroRoutes.ts        <= Hero API Routes like get,post,put,delete
-    │    │    │    │    ├── Routes.ts            <= fetching all appliction routes here
-    │    │    ├── controller
+    │    │    │    │    ├── HeroRoutes.ts               <= Hero API Routes like get,post,put,delete
+    │    │    │    │    ├── Routes.ts                   <= fetching all appliction routes here
+    │    │    ├── controllers
     │    │    │    ├── interfaces
     │    │    │    │    ├── ReadController.ts
     │    │    │    │    ├── WriteController.ts
-    │    │    │    ├── BaseController.ts         <= Base Repository controller
+    │    │    │    ├── BaseController.ts                <= Base Repository controller
     │    │    │    ├── HeroController.ts
+    │    │    ├── tools
+    │    │    │    ├── logger.ts
     │    │    ├── server.ts
     │    ├── typings
     │    ├── tsconfig.json
     │    ├── tsconfig.json
-    ├── gulpfile.ts                              <= gulp tasks : clean, build, compile, run.
+    ├── gulpfile.ts                                     <= gulp tasks : clean, build, compile, run.
     ├── LICENSE
     ├── package.json
     ├── README.md

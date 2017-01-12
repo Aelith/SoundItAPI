@@ -5,7 +5,7 @@
 import express = require("express");
 import HeroBusiness = require("./../app/business/HeroBusiness");
 import IBaseController = require("./interfaces/BaseController");
-import IHeroModel = require("./../app/model/interfaces/HeroModel");
+import IHeroModel = require("../app/model/mongo/interfaces/HeroModel");
 import logger = require("./../tools/Logger");
 
 

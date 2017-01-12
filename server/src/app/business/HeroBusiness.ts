@@ -2,10 +2,10 @@
  * Created by Moiz.Kachwala on 15-06-2016.
  */
 
-import HeroRepository = require("./../repository/HeroRepository");
+import HeroRepository = require("../repository/mongo/HeroRepository");
 import IHeroBusiness = require("./interfaces/HeroBusiness");
-import IHeroModel = require("./../model/interfaces/HeroModel");
-import HeroModel = require("./../model/HeroModel");
+import IHeroModel = require("../model/mongo/interfaces/HeroModel");
+import HeroModel = require("../model/mongo/HeroModel");
 
 
 class HeroBusiness implements IHeroBusiness {

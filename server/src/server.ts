@@ -1,5 +1,3 @@
-/// <reference path="../typings/index.d.ts" />
-
 import express 			= require('express');
 import BaseRoutes 	    = require("./config/routes/Routes");
 import bodyParser 	    = require("body-parser");

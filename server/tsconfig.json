@@ -1,5 +1,7 @@
 {
+  "version": "2.1.1",
   "compilerOptions": {
+    "lib": ["es5", "es6"],
     "target": "ES5",
     "module": "commonjs",
     "sourceMap": true,
@@ -9,6 +11,6 @@
     "noImplicitAny": false
   },
   "exclude": [
-    "typings"
+
   ]
 }

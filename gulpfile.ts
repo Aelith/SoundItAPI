@@ -13,8 +13,7 @@ const gulp = require("gulp"),
     tslint = require('gulp-tslint'),
     concat = require('gulp-concat'),
     runSequence = require('run-sequence'),
-    nodemon = require('gulp-nodemon'),
-    gulpTypings = require("gulp-typings");
+    nodemon = require('gulp-nodemon');
 
 /**
  * Remove build directory.
@@ -67,14 +66,6 @@ gulp.task("serverResources", () => {
         .pipe(gulp.dest("dist/server/bin"));
 });
 
-/**
- * Install typings for server and client.
- */
-gulp.task("installTypings", function () {
-    var stream = gulp.src(["./server/typings.json" ])
-        .pipe(gulpTypings(null)); //will install all typingsfiles in pipeline.
-    return stream; // by returning stream gulp can listen to events from the stream and knows when it is finished.
-});
 
 /**
  * Start the express server with nodemon
@@ -87,7 +78,7 @@ gulp.task('start', function () {
         , tasks: ['tslint']
     })
         .on('restart', function () {
-            console.log('restarted!');
+            //console.log('restarted!');
         });
 });
 
@@ -110,7 +101,7 @@ gulp.task("build", function (callback) {
 gulp.task('watch', function () {
 
     gulp.watch(["server/src/**/*.ts"], ['compileServer']).on('change', function (e) {
-        console.log('TypeScript file ' + e.path + ' has been changed. Compiling.');
+        //console.log('TypeScript file ' + e.path + ' has been changed. Compiling.');
     });
 });
 

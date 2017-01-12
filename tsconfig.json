@@ -1,5 +1,7 @@
 {
+  "version": "2.1.1",
   "compilerOptions": {
+    "lib": ["es5", "es6"],
     "outDir": "build/app",
     "target": "es5",
     "module": "commonjs",
@@ -10,9 +12,9 @@
     "removeComments": false,
     "noImplicitAny": false
   },
+  "include": [
+    "node_modules/@types"
+  ],
   "exclude": [
-    "node_modules",
-    "typings",
-    "typings/index.d.ts"
   ]
 }

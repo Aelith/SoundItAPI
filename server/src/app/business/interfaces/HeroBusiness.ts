@@ -3,7 +3,7 @@
  */
 
 import BaseBusiness = require("./BaseBusiness");
-import IHeroModel = require("./../../model/interfaces/HeroModel");
+import IHeroModel = require("../../model/mongo/interfaces/HeroModel");
 
 interface HeroBusiness extends BaseBusiness<IHeroModel> {
 

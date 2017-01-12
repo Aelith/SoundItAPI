@@ -2,8 +2,8 @@
  * Created by Moiz.Kachwala on 15-06-2016.
  */
 
-import DataAccess = require('../DataAccess');
-import IHeroModel = require("./../../model/interfaces/HeroModel");
+import DataAccess = require('../DataAccessMongo');
+import IHeroModel = require("../../../model/mongo/interfaces/HeroModel");
 
 var mongoose = DataAccess.mongooseInstance;
 var mongooseConnection = DataAccess.mongooseConnection;
