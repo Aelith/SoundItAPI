@@ -5,6 +5,7 @@ import PostgresModel = require("./interfaces/PostgresModel");
 
 @Table("country")
 export class Country implements PostgresModel {
+
 	@PrimaryGeneratedColumn()
     id: number;
 	
@@ -26,21 +27,19 @@ export class Country implements PostgresModel {
 	@Column({length: 80})
 	prettyPrintName: string;
 
-
 	//bi-directional many-to-one association to Address
 	@OneToMany(type => Address, address => address.country)
 	addresses: Address[];
 
+	@CreateDateColumn({default:"NOW()"})
+	createTime: Date;
 
-	@CreateDateColumn()
-	createTime: Date; //TimeStamp;
+	@UpdateDateColumn({nullable:true})
+	updateTime: Date;
 
-	@UpdateDateColumn({nullable: true})
-	updateTime: Date; //TimeStamp;
-
-	@Column()
+	@Column({default:false})
 	deleted: boolean;
-
+	
 	constructor() {
 		
 	}

@@ -1,4 +1,4 @@
-import {Table, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn,JoinColumn} from "typeorm";
+import {Table, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import {User} from "./User";
 import {Country} from "./Country";
 import PostgresModel = require("./interfaces/PostgresModel");
@@ -22,35 +22,28 @@ export class Address implements PostgresModel {
 	@Column({length: 45})
 	postalCode: string;
 
-	@Column({length: 80})
+	@Column({length: 80, nullable:true})
 	state: string;
-
 
 	//bi-directional many-to-one association to Country
 	@ManyToOne(type => Country, country => country.addresses, {nullable: false})
-	//@JoinColumn({name: "countryId"})
 	country: Country;
-
-	//@Column({ nullable: false })
-	//countryId: number;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne(type => User, user => user.addresses, {nullable: false})
 	user: User;
 
+	@CreateDateColumn({default:"NOW()"})
+	createTime: Date;
 
-	@CreateDateColumn()
-	createTime: Date; //TimeStamp;
+	@UpdateDateColumn({nullable:true})
+	updateTime: Date;
 
-	@UpdateDateColumn({nullable: true})
-	updateTime: Date; //TimeStamp;
-
-	@Column()
+	@Column({default:false})
 	deleted: boolean;
-
-
+	
 	constructor() {
-
+		
 	}
 
 
