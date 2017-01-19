@@ -16,7 +16,9 @@ class UserRoutes {
         var controller = this._userController;
 
         //Show user detail
-        router.get("/user/:_userId", controller.getUserDetails);
+        router.get("/user/:_userId", controller.findById);
+        //Show user detail edition view
+        router.get("/user/:_userId/edit", controller.getEditionView);
         //Show user application settings edition view
         router.get("/userSettings/:_userId/edit", controller.getUserSettingsEditionView);
         //Show saved playlist creation view
