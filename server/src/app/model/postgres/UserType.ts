@@ -3,8 +3,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {User} from "./User";
 
 
-@Table()
-export class UserType implements PostgresModel {
+@Table("UserType")
+export class UserType extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -22,10 +22,11 @@ export class UserType implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

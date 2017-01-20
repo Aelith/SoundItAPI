@@ -12,8 +12,8 @@ import {UserType} from "./UserType";
 import {UserRight} from "./UserRight";
 
 
-@Table()
-export class User implements PostgresModel {
+@Table("User")
+export class User extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
     id: number;
@@ -88,11 +88,11 @@ export class User implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 	constructor() {
-		
+		super();
 	}
 
 }

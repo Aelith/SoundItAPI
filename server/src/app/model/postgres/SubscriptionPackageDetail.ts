@@ -4,8 +4,8 @@ import {Tax} from "./Tax";
 import {SubscriptionPackage} from "./SubscriptionPackage";
 
 
-@Table()
-export class SubscriptionPackageDetail implements PostgresModel {
+@Table("SubscriptionPackageDetail")
+export class SubscriptionPackageDetail extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -33,10 +33,11 @@ export class SubscriptionPackageDetail implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

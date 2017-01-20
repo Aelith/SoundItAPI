@@ -3,8 +3,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {UserGroup} from "./UserGroup";
 
 
-@Table()
-export class RoomRight implements PostgresModel {
+@Table("RoomRight")
+export class RoomRight extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -22,10 +22,11 @@ export class RoomRight implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

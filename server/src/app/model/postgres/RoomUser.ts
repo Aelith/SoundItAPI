@@ -4,12 +4,9 @@ import {Room} from "./Room";
 import {User} from "./User";
 
 
-@Table()
-export class RoomUser implements PostgresModel {
-/*
-	@Embedded(type => RoomUserPK)
-	id: RoomUserPK;
-*/
+@Table("RoomUser")
+export class RoomUser extends PostgresModel {
+
 	@Column()
 	firstvisit: Date;
 
@@ -30,11 +27,12 @@ export class RoomUser implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 
 	constructor() {
+		super();
 	}
 
 }

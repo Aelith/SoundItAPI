@@ -7,8 +7,9 @@ import {RoomUser} from "./RoomUser";
 import PostgresModel = require("./interfaces/PostgresModel");
 
 
-@Table()
-export class Room implements PostgresModel {
+@Table("Room")
+export class Room extends PostgresModel {
+
 	@PrimaryGeneratedColumn()
     id: number;
 
@@ -56,11 +57,12 @@ export class Room implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 
 	constructor() {
+		super();
 	}
 
 }

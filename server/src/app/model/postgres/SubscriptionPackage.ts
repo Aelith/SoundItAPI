@@ -6,14 +6,9 @@ import {SubscriptionPackageState} from "./SubscriptionPackageState";
 import {User} from "./User";
 
 
-@Table()
-export class SubscriptionPackage implements PostgresModel {
-	
-/*
-	@Embedded(type => SubscriptionPackagePK)
-	id: SubscriptionPackagePK;
-*/
-	
+@Table("SubscriptionPackage")
+export class SubscriptionPackage extends PostgresModel {
+
 	@PrimaryColumn()
 	beginTime: Date;
 	
@@ -46,11 +41,12 @@ export class SubscriptionPackage implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 
 	constructor() {
+		super();
 	}
 	
 

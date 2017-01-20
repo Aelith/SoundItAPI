@@ -29,9 +29,9 @@ var logger = new winston.Logger({
         }),
         new (winston.transports.File)({
             name: 'error-file',
-    filename: 'logs/error.log',
-        level: 'error'
-})
+            filename: 'logs/error.log',
+            level: 'error'
+        })
 ]
 });
 

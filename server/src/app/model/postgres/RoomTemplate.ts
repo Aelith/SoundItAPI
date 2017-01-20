@@ -7,8 +7,8 @@ import {Room} from "./Room";
 import {User} from "./User";
 
 
-@Table()
-export class RoomTemplate implements PostgresModel {
+@Table("RoomTemplate")
+export class RoomTemplate extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -45,10 +45,11 @@ export class RoomTemplate implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

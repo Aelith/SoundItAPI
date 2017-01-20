@@ -3,8 +3,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {User} from "./User";
 
 
-@Table()
-export class UserRight implements PostgresModel {
+@Table("UserRight")
+export class UserRight extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -14,7 +14,7 @@ export class UserRight implements PostgresModel {
 
 	//bi-directional many-to-many association to User
 	@ManyToMany(type => User, user=> user.userRights, {nullable: true})
-	@JoinTable({name: "userUserRight"})
+	@JoinTable({name: "UserUserRight"})
 	users: User[];
 
 	@CreateDateColumn({default:"NOW()"})
@@ -23,10 +23,11 @@ export class UserRight implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

@@ -5,8 +5,8 @@ import {RoomTemplate} from "./RoomTemplate";
 import {Room} from "./Room";
 
 
-@Table()
-export class Tag implements PostgresModel {
+@Table("Tag")
+export class Tag extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -16,17 +16,17 @@ export class Tag implements PostgresModel {
 
 	//bi-directional many-to-many association to Event
 	@ManyToMany(type => Event, event=> event.tags, {nullable:true})
-	@JoinTable({name: "eventTag"})
+	@JoinTable({name: "EventTag"})
 	events: Event[];
 	
 	//bi-directional many-to-many association to Room
 	@ManyToMany(type => Room, room=> room.tags, {nullable:true})
-	@JoinTable({name: "roomTag"})
+	@JoinTable({name: "RoomTag"})
 	rooms: Room[];
 	
 	//bi-directional many-to-many association to Roomtemplate
 	@ManyToMany(type => RoomTemplate, roomTemplate=> roomTemplate.tags, {nullable:true})
-	@JoinTable({name: "roomTemplateTag"})
+	@JoinTable({name: "RoomTemplateTag"})
 	roomTemplates: RoomTemplate[];
 
 	@CreateDateColumn({default:"NOW()"})
@@ -35,10 +35,11 @@ export class Tag implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

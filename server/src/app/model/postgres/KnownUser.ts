@@ -8,12 +8,9 @@ import {UserGroup} from "./UserGroup";
 
 
 
-@Table()
-export class KnownUser implements PostgresModel {
-/*
-	@Embedded(type => KnownUserPK)
-	id: KnownUserPK;
-*/
+@Table("KnownUser")
+export class KnownUser extends PostgresModel {
+
 	@Column()
 	experience: number;
 
@@ -35,10 +32,11 @@ export class KnownUser implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 	constructor() {
+		super();
 	}
 
 }

@@ -3,13 +3,9 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {Playlist} from "./Playlist";
 import {Song} from "./Song";
 
-@Table()
-export class PlaylistSong implements PostgresModel {
-/*
-	@PrimaryColumn()
-	@Embedded(type => PlaylistSongPK)
-	id: PlaylistSongPK;
-*/
+@Table("PlaylistSong")
+export class PlaylistSong extends PostgresModel {
+
 	@Column()
 	addDate: Date;
 
@@ -39,10 +35,11 @@ export class PlaylistSong implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 	constructor() {
+		super();
 	}
 
 }

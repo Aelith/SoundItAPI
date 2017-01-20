@@ -3,8 +3,8 @@ import {Address} from "./Address";
 import PostgresModel = require("./interfaces/PostgresModel");
 
 
-@Table("country")
-export class Country implements PostgresModel {
+@Table("Country")
+export class Country extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
     id: number;
@@ -37,11 +37,11 @@ export class Country implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
-		
+		super();
 	}
 
 

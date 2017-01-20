@@ -2,10 +2,11 @@ import {Table, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, Upda
 import {User} from "./User";
 import {Country} from "./Country";
 import PostgresModel = require("./interfaces/PostgresModel");
+import construct = Reflect.construct;
 
 
-@Table()
-export class Address implements PostgresModel {
+@Table("Address")
+export class Address extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -39,11 +40,11 @@ export class Address implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 	
 	constructor() {
-		
+		super();
 	}
 
 

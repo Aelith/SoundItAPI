@@ -5,12 +5,9 @@ import {Playlist} from "./Playlist";
 import {PlaylistType} from "./PlaylistType";
 
 
-@Table()
-export class RoomPlaylist implements PostgresModel {
-/*
-	@Embedded(type => RoomPlaylistPK)
-	id: RoomPlaylistPK;
-*/
+@Table("RoomPlaylist")
+export class RoomPlaylist extends PostgresModel {
+
 	//bi-directional many-to-one association to Playlist
 	@ManyToOne(type => Playlist, playlist => playlist.roomPlaylists, {nullable:false, primary:true})
 	playlist: Playlist;
@@ -29,11 +26,12 @@ export class RoomPlaylist implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
 
 	constructor() {
+		super();
 	}
 
 }

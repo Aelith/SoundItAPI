@@ -3,8 +3,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {SubscriptionPackage} from "./SubscriptionPackage";
 
 
-@Table()
-export class SubscriptionPackageState implements PostgresModel {
+@Table("SubscriptionPackageState")
+export class SubscriptionPackageState extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -22,10 +22,11 @@ export class SubscriptionPackageState implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

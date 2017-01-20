@@ -3,8 +3,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {Playlist} from "./Playlist";
 import {RoomPlaylist} from "./RoomPlaylist";
 
-@Table()
-export class PlaylistType implements PostgresModel {
+@Table("PlaylistType")
+export class PlaylistType extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
     id: number;
@@ -26,10 +26,11 @@ export class PlaylistType implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

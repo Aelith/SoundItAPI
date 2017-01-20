@@ -3,8 +3,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {Song} from "./Song";
 
 
-@Table()
-export class SongSource implements PostgresModel {
+@Table("SongSource")
+export class SongSource extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -22,10 +22,11 @@ export class SongSource implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

@@ -5,8 +5,8 @@ import {KnownUser} from "./KnownUser";
 import {Room} from "./Room";
 
 
-@Table()
-export class UserGroup implements PostgresModel {
+@Table("UserGroup")
+export class UserGroup extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -24,7 +24,7 @@ export class UserGroup implements PostgresModel {
 	
 	//bi-directional many-to-many association to Roomright
 	@ManyToMany(type => RoomRight, roomRight=> roomRight.userGroups, {nullable: true})
-	@JoinTable({name: "userGroupRoomRight"})
+	@JoinTable({name: "UserGroupRoomRight"})
 	roomRights: RoomRight[];
 
 	@CreateDateColumn({default:"NOW()"})
@@ -33,10 +33,11 @@ export class UserGroup implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

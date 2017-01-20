@@ -5,8 +5,8 @@ import {PlaylistType} from "./PlaylistType";
 import {PlaylistSong} from "./PlaylistSong";
 import {RoomPlaylist} from "./RoomPlaylist";
 
-@Table()
-export class Playlist implements PostgresModel {
+@Table("Playlist")
+export class Playlist extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
     id: number;
@@ -45,10 +45,11 @@ export class Playlist implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }

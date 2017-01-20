@@ -4,8 +4,8 @@ import {RoomTemplate} from "./RoomTemplate";
 import {Tag} from "./Tag";
 
 
-@Table()
-export class Event implements PostgresModel {
+@Table("Event")
+export class Event extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -34,11 +34,11 @@ export class Event implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
 
-	
-	constructor() {
-	}
 
+	constructor() {
+		super();
+	}
 }

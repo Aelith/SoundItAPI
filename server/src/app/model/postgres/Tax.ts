@@ -4,8 +4,8 @@ import PostgresModel = require("./interfaces/PostgresModel");
 import {SubscriptionPackageDetail} from "./SubscriptionPackageDetail";
 
 
-@Table()
-export class Tax implements PostgresModel {
+@Table("Tax")
+export class Tax extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -26,10 +26,11 @@ export class Tax implements PostgresModel {
 	@UpdateDateColumn({nullable:true})
 	updateTime: Date;
 
-	@Column({default:false})
+	@Column({default:"false"})
 	deleted: boolean;
-	
+
 	constructor() {
+		super();
 	}
 
 }
