@@ -12,6 +12,7 @@ class PlaylistRoutes {
     constructor () {
         this._playlistController = new PlaylistController();
     }
+
     get routes () {
         var controller = this._playlistController;
 
