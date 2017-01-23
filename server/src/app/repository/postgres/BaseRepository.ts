@@ -17,6 +17,7 @@ class BaseRepository<T extends PostgresModel> implements  Read<T>, Write<T> {
         this.entity = entity;
     }
 
+
     /**
      * Get one entity by his id
      * @param id
@@ -37,6 +38,7 @@ class BaseRepository<T extends PostgresModel> implements  Read<T>, Write<T> {
             });
     }
 
+
     /**
      * Retrieve all entities from database
      * @param callback Callback : first param is error (null if succeeded), second is an entity array (empty if no result, or null if error)
@@ -53,6 +55,7 @@ class BaseRepository<T extends PostgresModel> implements  Read<T>, Write<T> {
                 callback(e, null);
             });
     }
+
 
     /**
      * Insert object into database
