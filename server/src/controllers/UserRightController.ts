@@ -3,45 +3,40 @@
  */
 
 import express = require("express");
+import UserRightBusiness = require("./../app/business/UserRightBusiness");
 import IBaseController = require("./interfaces/BaseController");
 import logger = require("./../tools/Logger");
-import EventBusiness = require("../app/business/EventBusiness");
-import {Event} from "../app/model/postgres/Event";
 
-class EventController {
 
-    private eventBusiness;
+class UserRightController {
+
+    private userRightBusiness;
 
     constructor(){
-        this.eventBusiness = new EventBusiness();
+        this.userRightBusiness = new UserRightBusiness();
     }
 
-    //Show events
-    getEvents(): void {
+    //Show room's user rights
+    getRoomUserRights(): void {
         //TODO
     }
 
-    //Show event detail
-    getEventDetails(): void {
-        //TODO
-    }
-
-    //Show event edition view
-    getEditionView(): void {
-        //TODO
-    }
-
-    //Show event creation view
+    //Show user right creation view
     getCreationView(): void {
         //TODO
     }
 
-    //Create event
+    //Show user right edition view
+    getEditionView(): void {
+        //TODO
+    }
+
+    //Create user right
     create(req: express.Request, res: express.Response): void {
         //TODO
         try {
 
-            this.eventBusiness.create(JSON.parse(req.body), (error, result) => {
+            this.userRightBusiness.create(JSON.parse(req.body), (error, result) => {
                 if (error) {
                     logger.warn("create : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});
@@ -56,12 +51,12 @@ class EventController {
         }
     }
 
-    //Update an event
+    //Update a user right
     update(req: express.Request, res: express.Response): void {
         //TODO
         try {
 
-            this.eventBusiness.update(JSON.parse(req.body), (error, result) => {
+            this.userRightBusiness.update(JSON.parse(req.body), (error, result) => {
                 if (error) {
                     logger.warn("update : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});
@@ -77,11 +72,11 @@ class EventController {
         }
     }
 
-    //Delete an event
+    //Delete a user right
     delete(req: express.Request, res: express.Response): void {
         try {
 
-            this.eventBusiness.delete(JSON.parse(req.body), (error, result) => {
+            this.userRightBusiness.delete(JSON.parse(req.body), (error, result) => {
                 if (error) {
                     logger.warn("delete : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});
@@ -98,4 +93,4 @@ class EventController {
     }
 
 }
-export = EventController;
+export = UserRightController;
