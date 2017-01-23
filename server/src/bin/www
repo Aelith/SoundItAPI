@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+require('reflect-metadata');
 var app = require('../server').app;
 var http = require('http');
 

@@ -2,7 +2,6 @@
  * Created by soundit on 16/01/2017.
  */
 
-import "reflect-metadata";
 import {createConnection, Connection} from "typeorm";
 import Constants = require("./../../../config/constants/constants");
 

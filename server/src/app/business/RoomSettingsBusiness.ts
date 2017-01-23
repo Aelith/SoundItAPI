@@ -1,21 +1,20 @@
 /**
  * Created by Lakio on 21/01/2017.
  */
-
-import RoomSettingsRepository = require("../repository/postgres/RoomSettingsRepository");
+import RoomTemplateRepository = require("../repository/postgres/RoomTemplateRepository");
 import BaseBusiness = require("./interfaces/BaseBusiness");
-import {RoomSettings} from "../model/postgres/RoomSettings";
+import {RoomTemplate} from "../model/postgres/RoomTemplate";
 
-class RoomSettingsBusiness extends BaseBusiness<RoomSettings> {
+class RoomTemplateBusiness extends BaseBusiness<RoomTemplate> {
 
-    private roomSettingsRepository: RoomSettingsRepository;
+    private roomSettingsRepository: RoomTemplateRepository;
 
     constructor () {
-        super(RoomSettings);
-        this.roomSettingsRepository = new RoomSettingsRepository();
+        super(RoomTemplate);
+        this.roomSettingsRepository = new RoomTemplateRepository();
     }
 
 }
 
-Object.seal(RoomSettingsBusiness );
-export = RoomSettingsBusiness ;
+Object.seal(RoomTemplateBusiness );
+export = RoomTemplateBusiness ;

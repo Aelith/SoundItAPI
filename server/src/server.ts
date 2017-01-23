@@ -3,7 +3,6 @@ import BaseRoutes 	    = require("./config/routes/Routes");
 import bodyParser 	    = require("body-parser");
 import path 			= require('path');
 import compression      = require('compression');
-require("reflect-metadata");
 
 var port	: number 	= process.env.PORT || 3000;
 var env		: string 	= process.env.NODE_ENV || 'developement';

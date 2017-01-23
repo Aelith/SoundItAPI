@@ -22,7 +22,7 @@
     "no-unused-variable": false,
     "no-unreachable": true,
     "no-use-before-declare": true,
-    "one-line": [ true, "check-open-brace",  "check-whitespace" ],
+    "one-line": [ false, "check-open-brace",  "check-whitespace" ],
     "radix": true,
     "semicolon": [ true ],
     "triple-equals": [ true, "allow-null-check" ],

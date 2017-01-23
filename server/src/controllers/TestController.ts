@@ -3,7 +3,6 @@
  */
 
 import express = require("express");
-import HeroBusiness = require("./../app/business/HeroBusiness");
 import logger = require("./../tools/Logger");
 
 import AddressRepository = require("./../app/repository/postgres/AddressRepository");
