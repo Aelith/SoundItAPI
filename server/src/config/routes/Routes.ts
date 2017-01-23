@@ -4,7 +4,7 @@
 import express = require('express');
 import path = require('path');
 
-import HeroRoutes = require('../routes/HeroRoutes');
+// import HeroRoutes = require('../routes/HeroRoutes');
 import UserRoutes = require("./UserRoutes");
 import StatisticRoutes = require("./StatisticRoutes");
 import RoomSettingsRoutes = require("./RoomSettingsRoutes");
@@ -12,8 +12,9 @@ import PlaylistRoutes = require("./PlaylistRoutes");
 import DashboardRoutes = require("./DashboardRoutes");
 import EventRoutes = require("./EventRoutes");
 import RoomRoutes = require("./RoomRoutes");
-import RoomUserRightRoutes = require("./RoomUserRightRoutes");
-import TestRoutes = require('../routes/TestRoutes');
+import RoomUserRightRoutes = require("./UserRightRoutes");
+import SongRoutes = require("./SongRoutes");
+// import TestRoutes = require('../routes/TestRoutes');
 
 
 
@@ -23,7 +24,7 @@ class Routes {
 
     get routes() {
 
-        app.use("/", new HeroRoutes().routes);
+        // app.use("/", new HeroRoutes().routes);
         app.use("/", new UserRoutes().routes);
         app.use("/", new PlaylistRoutes().routes);
         app.use("/", new DashboardRoutes().routes);
@@ -32,6 +33,7 @@ class Routes {
         app.use("/", new RoomSettingsRoutes().routes);
         app.use("/", new RoomUserRightRoutes().routes);
         app.use("/", new StatisticRoutes().routes);
+        app.use("/", new SongRoutes().routes);
 
         app.use("/", new TestRoutes().routes);
 

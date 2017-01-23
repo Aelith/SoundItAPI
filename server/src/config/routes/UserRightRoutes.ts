@@ -3,17 +3,18 @@
  */
 
 import express = require("express");
-import RoomUserRightController = require("./../../controllers/RoomUserRightController");
+import RoomUserRightController = require("../../controllers/UserRightController");
+import UserRightController = require("../../controllers/UserRightController");
 
 var router = express.Router();
 class RoomUserRightRoutes {
-    private _roomUserRightsController: RoomUserRightController;
+    private userRightsController: UserRightController;
 
     constructor () {
-        this._roomUserRightsController = new RoomUserRightController();
+        this.userRightsController = new UserRightController();
     }
     get routes () {
-        var controller = this._roomUserRightsController;
+        var controller = this.userRightsController;
 
         //Show room's user rights
         router.get("/userRights/:_roomId", controller.getRoomUserRights);
