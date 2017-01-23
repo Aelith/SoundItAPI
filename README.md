@@ -73,7 +73,6 @@ SoundItAPI
     │    │    ├── tools
     │    │    │    ├── logger.ts
     │    │    ├── server.ts                             <= Server configuration
-    │    ├── typings
     │    ├── tsconfig.json
     │    ├── tsconfig.json
     ├── gulpfile.ts                                     <= gulp tasks : clean, build, compile, run.

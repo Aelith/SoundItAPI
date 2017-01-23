@@ -27,7 +27,9 @@ class BaseRepository<T extends PostgresModel> implements  Read<T>, Write<T> {
 
         DataAccessPostgres.connect()
             .getRepository(this.entity)
-            .findOneById(id)
+            .createQueryBuilder(this.entity.getTableName())
+            .where("\"" + this.entity.getTableName() + "\".id = :id", {id: id})
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
