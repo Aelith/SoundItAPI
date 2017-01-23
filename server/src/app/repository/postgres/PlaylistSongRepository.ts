@@ -16,7 +16,7 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
 
     findById (id:number, callback: (error: any, result: any) => any)
     {
-        return "";
+        callback(new Error("Unavailable method"), null);
     }
 
     findByIds (idPlaylist: number, idSong: number, callback: (error: any, result: any) => any)
@@ -41,7 +41,7 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
             .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
-            .getOne()
+            .getMany()
             .then((result) => {
                 callback(null, result);
             })
@@ -56,6 +56,25 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
             .where("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+
+    findHydratedByIds (idPlaylist: number, idSong: number, callback: (error: any, result: any) => any)
+    {
+        DataAccessPostgres.connect()
+            .getRepository(PlaylistSong)
+            .createQueryBuilder(PlaylistSong.getTableName())
+            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".playlist", "playlists")
+            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
             .getOne()
             .then((result) => {
                 callback(null, result);
@@ -64,6 +83,43 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
                 callback(e, null);
             });
     }
+
+    findHydratedByPlaylistId (idPlaylist: number, callback: (error: any, result: any) => any)
+    {
+        DataAccessPostgres.connect()
+            .getRepository(PlaylistSong)
+            .createQueryBuilder(PlaylistSong.getTableName())
+            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".playlist", "playlists")
+            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+    findHydratedBySongId (idSong: number, callback: (error: any, result: any) => any)
+    {
+        DataAccessPostgres.connect()
+            .getRepository(PlaylistSong)
+            .createQueryBuilder(PlaylistSong.getTableName())
+            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".playlist", "playlists")
+            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+
+    // Playlist by IdPlaylist, Room, User
 }
 
 export = PlaylistSongRepository;
