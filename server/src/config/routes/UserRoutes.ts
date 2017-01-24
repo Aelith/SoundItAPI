@@ -32,6 +32,9 @@ class UserRoutes {
         //Show user creation view
         router.get("/user/create", controller.getCreationView);
 
+        //Get login token
+        router.post("/login", controller.login);
+
         //Add room to favorite
         router.post("/user/:_userId/favoriteRoom/:_roomId", controller.addRoomToFavorite);
         //Save a playlist

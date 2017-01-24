@@ -6,6 +6,9 @@ import express = require("express");
 import UserBusiness = require("./../app/business/UserBusiness");
 import IBaseController = require("./interfaces/BaseController");
 import logger = require("./../tools/Logger");
+import jwt = require('jsonwebtoken');
+import Constants = require("../config/constants/constants");
+import LoginManager = require("../tools/LoginManager");
 
 
 class UserController implements IBaseController <UserBusiness> {
@@ -152,6 +155,18 @@ class UserController implements IBaseController <UserBusiness> {
 
     }
 
+
+    login(req: express.Request, res: express.Response): void {
+    //TODO
+        var token = LoginManager.getToken(req);
+
+        if(token){
+            res.send({"token": token});
+        }
+        else{
+            res.status(400).send({"result": "Bad Request"});
+        }
+    }
 
     //Create a user
     create(req: express.Request, res: express.Response): void {

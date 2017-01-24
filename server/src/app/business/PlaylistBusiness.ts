@@ -5,32 +5,35 @@
 import PlaylistRepository = require("../repository/postgres/PlaylistRepository");
 import {Playlist} from "../model/postgres/Playlist";
 import BaseBusiness = require("./interfaces/BaseBusiness");
+import PlaylistSongRepository = require("../repository/postgres/PlaylistSongRepository");
 
 class PlaylistBusiness extends BaseBusiness<Playlist> {
 
-    private _playlistRepository: PlaylistRepository;
+    private playlistRepository: PlaylistRepository;
+    private playlistSongRepository: PlaylistSongRepository;
 
     constructor () {
         super(Playlist);
-        this._playlistRepository = new PlaylistRepository();
+        this.playlistRepository = new PlaylistRepository();
+        this.playlistSongRepository= new PlaylistSongRepository();
     }
 
     create (item: Playlist, callback: (error: any, result: any) => void) {
-        this._playlistRepository.create(item, callback);
+        this.playlistRepository.create(item, callback);
     }
 
     retrieve (callback: (error: any, result: any) => void) {
-        this._playlistRepository.retrieve(callback);
+        this.playlistRepository.retrieve(callback);
     }
 
     update (item: Playlist, callback: (error: any, result: any) => void) {
         //TODO
-        this._playlistRepository.findById(item.id, (err, res) => {
+        this.playlistRepository.findById(item.id, (err, res) => {
             if(err) {
                 callback(err, res);
             }
             else {
-                this._playlistRepository.update(item, callback);
+                this.playlistRepository.update(item, callback);
             }
         });
     }
@@ -40,11 +43,13 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
     }
 
     findById (_id: number, callback: (error: any, result: Playlist) => void) {
-        this._playlistRepository.findById(_id, callback);
+        // this.playlistRepository.findById(_id, callback);
+        this.playlistRepository.findCustomHydratedById(_id, [PlaylistRepository.eProperty.Songs,PlaylistRepository.eProperty.PlaylistType],callback);
     }
 
     getPlaylistsWithDetails(callback: (error: any, result: any) => void){
         //TODO
+
     }
 
     getUserSettings (_id: number, callback: (error: any, result: any) => void) {

@@ -7,25 +7,28 @@ import IBaseController = require("./interfaces/BaseController");
 import logger = require("./../tools/Logger");
 import PlaylistBusiness = require("../app/business/PlaylistBusiness");
 import {Playlist} from "../app/model/postgres/Playlist";
+import LoginManager = require("../tools/LoginManager");
 
 
 class PlaylistController {
 
-    private playlistBusiness;
+    // private playlistBusiness : PlaylistBusiness;
 
     constructor(){
-        this.playlistBusiness = new PlaylistBusiness();
+        // this.playlistBusiness = new PlaylistBusiness();
     }
 
     //Show playlists
     getPlaylists(req: express.Request, res: express.Response): void {
         //TODO
+        var playlistBusiness = new PlaylistBusiness();
+
         try
         {
-            this.playlistBusiness.getPlaylistsWithDetails((error, result) => {
+            playlistBusiness.getPlaylistsWithDetails((error, result) => {
                 if(error)
                 {
-                    logger.warn("getPlaylists : error", {"error": error});
+                    logger.warn("PlaylistController.getPlaylists : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
@@ -35,7 +38,7 @@ class PlaylistController {
             });
         }
         catch (e)  {
-            logger.error("getPlaylists : error", {"error": e});
+            logger.error("PlaylistController.getPlaylists : error", e);
             res.status(400).send({"result": "Bad Request"});
         }
     }
@@ -45,22 +48,39 @@ class PlaylistController {
         //TODO
         try
         {
-            var _id: string = req.params._playlistId;
+            var _id: number = req.params._playlistId;
 
-            this.playlistBusiness.findById(_id, (error, result) => {
+            LoginManager.decodeToken(req,res, (error, result) => {
                 if(error)
                 {
-                    logger.warn("getPlaylist : error", {"error": error});
+                    logger.warn("PlaylistController.getPlaylist -> findById : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
                 {
-                    res.json(JSON.stringify(result));
+                    if (result) {
+                        var playlistBusiness = new PlaylistBusiness();
+                        playlistBusiness.findById(_id, (error, result) => {
+                            if(error)
+                            {
+                                logger.warn("PlaylistController.getPlaylist -> findById : error", error);
+                                res.status(400).send({"result": "Bad Request"});
+                            }
+                            else
+                            {
+                                res.json(result);
+                            }
+                        })
+                    }
+                    else
+                    {
+                        res.send("failed authentication")
+                    }
                 }
             });
         }
         catch (e)  {
-            logger.error("getPlaylist : error", {"error": e});
+            logger.error("PlaylistController.getPlaylist catch", e);
             res.status(400).send({"result": "Bad Request"});
         }
 
@@ -76,7 +96,7 @@ class PlaylistController {
             res.json(JSON.stringify(playlist));
         }
         catch (e)  {
-            logger.error("getPlaylist : error", {"error": e});
+            logger.error("PlaylistController.getPlaylist : error", e);
             res.status(400).send({"result": "Bad Request"});
         }
     }
@@ -95,11 +115,13 @@ class PlaylistController {
     //Create playlist
     create(req: express.Request, res: express.Response): void {
         //TODO
+        var playlistBusiness = new PlaylistBusiness();
+
         try {
 
-            this.playlistBusiness.create(JSON.parse(req.body), (error, result) => {
+            playlistBusiness.create(JSON.parse(req.body), (error, result) => {
                 if (error) {
-                    logger.warn("create : error", {"error": error});
+                    logger.warn("PlaylistController.create : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
@@ -107,7 +129,7 @@ class PlaylistController {
             });
         }
         catch(e) {
-            logger.warn("create : error", {"error": e});
+            logger.warn("PlaylistController.create : error", e);
             res.status(400).send({"result": "Bad Request"});
         }
     }
@@ -120,11 +142,13 @@ class PlaylistController {
     //Update a playlist
     update(req: express.Request, res: express.Response): void {
         //TODO
+        var playlistBusiness = new PlaylistBusiness();
+
         try {
 
-            this.playlistBusiness.update(JSON.parse(req.body), (error, result) => {
+            playlistBusiness.update(JSON.parse(req.body), (error, result) => {
                 if (error) {
-                    logger.warn("update : error", {"error": error});
+                    logger.warn("PlaylistController.update : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
@@ -132,7 +156,7 @@ class PlaylistController {
             });
         }
         catch (e)  {
-            logger.error("update : error", {"error": e});
+            logger.error("PlaylistController.update : error", e);
             res.status(400).send({"result": "Bad Request"});
 
         }
@@ -140,11 +164,14 @@ class PlaylistController {
 
     //Delete a playlist
     delete(req: express.Request, res: express.Response): void {
+        //TODO
+        var playlistBusiness = new PlaylistBusiness();
+
         try {
 
-            this.playlistBusiness.delete(JSON.parse(req.body), (error, result) => {
+            playlistBusiness.delete(JSON.parse(req.body), (error, result) => {
                 if (error) {
-                    logger.warn("delete : error", {"error": error});
+                    logger.warn("PlaylistController.delete : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
@@ -152,7 +179,7 @@ class PlaylistController {
             });
         }
         catch (e)  {
-            logger.error("delete : error", {"error": e});
+            logger.error("PlaylistController.delete : error", e);
             res.status(400).send({"result": "Bad Request"});
 
         }

@@ -10,6 +10,7 @@ class Constants {
     static POSTGRES_PASSWORD: string        = process.env.NODE_ENV === 'production' ? process.env.PG_DB_Password : "soundit";
     static POSTGRES_DBNAME: string          = process.env.NODE_ENV === 'production' ? process.env.PG_DB_DBName : "soundit";
     static POSTGRES_SCHEMA: string          = process.env.NODE_ENV === 'production' ? process.env.PG_DB_Schema : "sounditapi";
+    static SECRET_TOKEN: string             = 'sajer-it@soundit#2017';
 }
 Object.seal(Constants);
 export = Constants;

@@ -3,20 +3,32 @@ import BaseRoutes 	    = require("./config/routes/Routes");
 import bodyParser 	    = require("body-parser");
 import path 			= require('path');
 import compression      = require('compression');
+import expressJwt       = require('express-jwt');
+import Constants        = require("./config/constants/constants");
+import cors             = require('cors');
 
 var port	: number 	= process.env.PORT || 3000;
 var env		: string 	= process.env.NODE_ENV || 'developement';
-
+var secure : number     = process.env.SECURE || 0;
 
 var app 	= express();
 
 app.set('port', port);
 
-
 app.use(express.static(path.resolve(__dirname, '../../node_modules')));
 
 app.use(bodyParser.json());
 app.use(compression());
+
+if (env === 'developement')
+{
+    app.use(cors());
+}
+
+
+if(secure == 1){
+    app.use(expressJwt({ secret: Constants.SECRET_TOKEN }).unless({ path: [ '/api/login' ]}));
+}
 
 app.use('/api', new BaseRoutes().routes);
 
@@ -46,5 +58,7 @@ app.use(function(err: any, req: express.Request, res: express.Response, next: ex
         message: err.message
     });
 });
+
+
 
 export { app }
