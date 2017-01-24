@@ -71,8 +71,8 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".playlist", "playlists")
-            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".song", "songs")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
             .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
             .andWhere("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
             .getOne()
@@ -89,8 +89,8 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".playlist", "playlists")
-            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".song", "songs")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
             .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
             .getMany()
             .then((result) => {
@@ -106,9 +106,25 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".playlist", "playlists")
-            .innerJoinAndSelect("\"" + PlaylistSong.getTableName() + "\".song", "songs")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
             .where("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+    retrieveHydrated (callback: (error: any, result: any) => any){
+
+        DataAccessPostgres.connect()
+            .getRepository(PlaylistSong)
+            .createQueryBuilder(PlaylistSong.getTableName())
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
             .getMany()
             .then((result) => {
                 callback(null, result);
