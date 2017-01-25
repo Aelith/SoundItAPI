@@ -1,4 +1,4 @@
-import {Table, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import {RoomTemplate} from "./RoomTemplate";
 import {UserGroup} from "./UserGroup";
 import {RoomPlaylist} from "./RoomPlaylist";
@@ -7,7 +7,7 @@ import {RoomUser} from "./RoomUser";
 import PostgresModel = require("./interfaces/PostgresModel");
 
 
-@Table("Room")
+@Entity("Room")
 export class Room extends PostgresModel {
 
 	@PrimaryGeneratedColumn()

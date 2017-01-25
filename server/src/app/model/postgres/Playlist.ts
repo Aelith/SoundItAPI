@@ -1,11 +1,11 @@
-import {Table, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {User} from "./User";
 import {PlaylistType} from "./PlaylistType";
 import {PlaylistSong} from "./PlaylistSong";
 import {RoomPlaylist} from "./RoomPlaylist";
 
-@Table("Playlist")
+@Entity("Playlist")
 export class Playlist extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
@@ -32,11 +32,11 @@ export class Playlist extends PostgresModel {
 	user: User;
 
 	//bi-directional many-to-one association to Playlistsong
-	@OneToMany(type => PlaylistSong, playlistSong => playlistSong.playlist, {nullable: false})
+	@OneToMany(type => PlaylistSong, playlistSong => playlistSong.playlist)
 	playlistSongs: PlaylistSong[];
 
 	//bi-directional many-to-one association to Roomplaylist
-	@OneToMany(type => RoomPlaylist, roomPlaylist => roomPlaylist.playlist, {nullable: false})
+	@OneToMany(type => RoomPlaylist, roomPlaylist => roomPlaylist.playlist)
 	roomPlaylists: RoomPlaylist[];
 
 	@CreateDateColumn({default:"NOW()"})

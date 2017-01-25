@@ -1,4 +1,4 @@
-import {Table, Column, Embedded, PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, Embedded, PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 
 
@@ -8,7 +8,7 @@ import {UserGroup} from "./UserGroup";
 
 
 
-@Table("KnownUser")
+@Entity("KnownUser")
 export class KnownUser extends PostgresModel {
 
 	@Column()

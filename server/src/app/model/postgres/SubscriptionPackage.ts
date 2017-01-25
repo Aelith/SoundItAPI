@@ -1,4 +1,4 @@
-import {Table, Column, PrimaryColumn, Embedded, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryColumn, Embedded, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 
 import {SubscriptionPackageDetail} from "./SubscriptionPackageDetail";
@@ -6,7 +6,7 @@ import {SubscriptionPackageState} from "./SubscriptionPackageState";
 import {User} from "./User";
 
 
-@Table("SubscriptionPackage")
+@Entity("SubscriptionPackage")
 export class SubscriptionPackage extends PostgresModel {
 
 	@PrimaryColumn()

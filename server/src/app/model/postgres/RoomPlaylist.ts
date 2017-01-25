@@ -1,11 +1,11 @@
-import {Table, Embedded, Column, PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Embedded, Column, PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {Room} from "./Room";
 import {Playlist} from "./Playlist";
 import {PlaylistType} from "./PlaylistType";
 
 
-@Table("RoomPlaylist")
+@Entity("RoomPlaylist")
 export class RoomPlaylist extends PostgresModel {
 
 	//bi-directional many-to-one association to Playlist

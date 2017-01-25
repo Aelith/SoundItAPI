@@ -1,4 +1,4 @@
-import {Table, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 
 import {Address} from "./Address";
@@ -12,7 +12,7 @@ import {UserType} from "./UserType";
 import {UserRight} from "./UserRight";
 
 
-@Table("User")
+@Entity("User")
 export class User extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
@@ -79,7 +79,7 @@ export class User extends PostgresModel {
 	userType: UserType;
 	
 	//bi-directional many-to-many association to Userright
-	@ManyToMany(type => UserRight, userRight => userRight.users, {nullable:true})
+	@ManyToMany(type => UserRight, userRight => userRight.users)
 	userRights: UserRight[];
 
 	@CreateDateColumn({default:"NOW()"})

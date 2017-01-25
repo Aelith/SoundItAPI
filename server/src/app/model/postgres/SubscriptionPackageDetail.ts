@@ -1,10 +1,10 @@
-import {Table, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {Tax} from "./Tax";
 import {SubscriptionPackage} from "./SubscriptionPackage";
 
 
-@Table("SubscriptionPackageDetail")
+@Entity("SubscriptionPackageDetail")
 export class SubscriptionPackageDetail extends PostgresModel {
 
 	@PrimaryGeneratedColumn()

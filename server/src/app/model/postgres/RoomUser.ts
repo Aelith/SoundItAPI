@@ -1,10 +1,10 @@
-import {Table, Embedded, Column, PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Embedded, Column, PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {Room} from "./Room";
 import {User} from "./User";
 
 
-@Table("RoomUser")
+@Entity("RoomUser")
 export class RoomUser extends PostgresModel {
 
 	@Column()

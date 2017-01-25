@@ -1,10 +1,10 @@
-import {Table, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {RoomTemplate} from "./RoomTemplate";
 import {Tag} from "./Tag";
 
 
-@Table("Event")
+@Entity("Event")
 export class Event extends PostgresModel {
 
 	@PrimaryGeneratedColumn()

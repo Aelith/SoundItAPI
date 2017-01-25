@@ -7,6 +7,7 @@ import logger = require("./../tools/Logger");
 
 import PlaylistSongRepository = require("./../app/repository/postgres/PlaylistSongRepository");
 import PlaylistRepository = require("./../app/repository/postgres/PlaylistRepository");
+import UserRepository = require("./../app/repository/postgres/UserRepository")
 import {PlaylistSong}  from "./../app/model/postgres/PlaylistSong";
 
 
@@ -15,7 +16,7 @@ class TestController
     retrieve(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistRepository = new PlaylistRepository();
+            let BR : UserRepository = new UserRepository();
             BR.retrieve((error, result) => {
                 if(error)
                 {
@@ -38,7 +39,7 @@ class TestController
     retrieveHydrated(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistRepository = new PlaylistRepository();
+            let BR : UserRepository = new UserRepository();
             BR.retrieveHydrated((error, result) => {
                 if(error)
                 {
@@ -111,7 +112,7 @@ class TestController
     findById1(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistRepository = new PlaylistRepository();
+            let BR : UserRepository = new UserRepository();
             var id = req.params._id;
             BR.findById(id, (error, result) => {
                 if(error)
@@ -135,7 +136,7 @@ class TestController
     findHydratedById1(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistRepository = new PlaylistRepository();
+            let BR : UserRepository = new UserRepository();
             var id = req.params._id;
             BR.findHydratedById(id, (error, result) => {
                 if(error)
@@ -161,9 +162,9 @@ class TestController
     findById2(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistRepository = new PlaylistRepository();
+            let BR : UserRepository = new UserRepository();
             var id = req.params._id;
-            BR.findByUserId(id, (error, result) => {
+            BR.findByLogin(id, (error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -185,9 +186,9 @@ class TestController
     findHydratedById2(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistRepository = new PlaylistRepository();
+            let BR : UserRepository = new UserRepository();
             var id = req.params._id;
-            BR.findCustomHydratedByUserId(id, [PlaylistRepository.eProperty.Songs, PlaylistRepository.eProperty.PlaylistType],(error, result) => {
+            BR.findCustomHydratedById(id, [UserRepository.eProperty.SubscriptionPackageState, UserRepository.eProperty.Country, UserRepository.eProperty.UserType],(error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});

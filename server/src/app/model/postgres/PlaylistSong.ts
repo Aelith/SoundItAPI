@@ -1,9 +1,9 @@
-import {Table, Embedded, Column,PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Embedded, Column,PrimaryColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {Playlist} from "./Playlist";
 import {Song} from "./Song";
 
-@Table("PlaylistSong")
+@Entity("PlaylistSong")
 export class PlaylistSong extends PostgresModel {
 
 	@Column()

@@ -41,10 +41,11 @@ class PlaylistRepository extends BaseRepository<Playlist> {
             .getRepository(Playlist)
             .createQueryBuilder(Playlist.getTableName())
             .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-            .innerJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
-            .innerJoinAndSelect(Playlist.getTableName() + ".user", "user")
-            .innerJoinAndSelect("playlistSongs.song", "song")
-            .innerJoinAndSelect("song.songSource", "songSource")
+            .leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
+            .leftJoinAndSelect(Playlist.getTableName() + ".user", "user")
+            .leftJoinAndSelect("playlistSongs.song", "song")
+            .leftJoinAndSelect("song.songSource", "songSource")
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -67,32 +68,33 @@ class PlaylistRepository extends BaseRepository<Playlist> {
 
 
         if (fields.indexOf(Property.PlaylistType) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType");
         }
         if (fields.indexOf(Property.User) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".user", "user");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".user", "user");
         }
 
 
 
         if (fields.indexOf(Property.SongSources) > -1) {
             QB
-                .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-                .innerJoinAndSelect("playlistSongs.song", "song")
-                .innerJoinAndSelect("song.songSource", "songSource");
+                .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+                .leftJoinAndSelect("playlistSongs.song", "song")
+                .leftJoinAndSelect("song.songSource", "songSource");
         }
         else if (fields.indexOf(Property.Songs) > -1)
         {
             QB
-                .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-                .innerJoinAndSelect("playlistSongs.song", "song");
+                .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+                .leftJoinAndSelect("playlistSongs.song", "song");
         }
         else if (fields.indexOf(Property.PlaylistSongs) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs");
         }
 
 
         QB
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -117,12 +119,13 @@ class PlaylistRepository extends BaseRepository<Playlist> {
         DataAccessPostgres.connect()
             .getRepository(Playlist)
             .createQueryBuilder(Playlist.getTableName())
-            .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-            .innerJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
-            .innerJoinAndSelect(Playlist.getTableName() + ".user", "user")
-            .innerJoinAndSelect("playlistSongs.song", "song")
-            .innerJoinAndSelect("song.songSource", "songSource")
-            .where("\"" + Playlist.getTableName() + "\".id = :idP", {idP: idPlaylist})
+            .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+            .leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
+            .leftJoinAndSelect(Playlist.getTableName() + ".user", "user")
+            .leftJoinAndSelect("playlistSongs.song", "song")
+            .leftJoinAndSelect("song.songSource", "songSource")
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + Playlist.getTableName() + "\".id = :idP", {idP: idPlaylist})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -146,33 +149,34 @@ class PlaylistRepository extends BaseRepository<Playlist> {
 
 
         if (fields.indexOf(Property.PlaylistType) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType");
         }
         if (fields.indexOf(Property.User) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".user", "user");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".user", "user");
         }
 
 
 
         if (fields.indexOf(Property.SongSources) > -1) {
             QB
-                .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-                .innerJoinAndSelect("playlistSongs.song", "song")
-                .innerJoinAndSelect("song.songSource", "songSource");
+                .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+                .leftJoinAndSelect("playlistSongs.song", "song")
+                .leftJoinAndSelect("song.songSource", "songSource");
         }
         else if (fields.indexOf(Property.Songs) > -1)
         {
             QB
-                .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-                .innerJoinAndSelect("playlistSongs.song", "song");
+                .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+                .leftJoinAndSelect("playlistSongs.song", "song");
         }
         else if (fields.indexOf(Property.PlaylistSongs) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs");
         }
 
 
         QB
-            .where("\"" + Playlist.getTableName() + "\".id = :idP", {idP: idPlaylist})
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + Playlist.getTableName() + "\".id = :idP", {idP: idPlaylist})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -199,7 +203,8 @@ class PlaylistRepository extends BaseRepository<Playlist> {
         DataAccessPostgres.connect()
             .getRepository(Playlist)
             .createQueryBuilder(Playlist.getTableName())
-            .where("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -219,12 +224,13 @@ class PlaylistRepository extends BaseRepository<Playlist> {
         DataAccessPostgres.connect()
             .getRepository(Playlist)
             .createQueryBuilder(Playlist.getTableName())
-            .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-            .innerJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
-            .innerJoinAndSelect(Playlist.getTableName() + ".user", "user")
-            .innerJoinAndSelect("playlistSongs.song", "song")
-            .innerJoinAndSelect("song.songSource", "songSource")
-            .where("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
+            .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+            .leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
+            .leftJoinAndSelect(Playlist.getTableName() + ".user", "user")
+            .leftJoinAndSelect("playlistSongs.song", "song")
+            .leftJoinAndSelect("song.songSource", "songSource")
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -249,33 +255,34 @@ class PlaylistRepository extends BaseRepository<Playlist> {
 
 
         if (fields.indexOf(Property.PlaylistType) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType");
         }
         if (fields.indexOf(Property.User) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".user", "user");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".user", "user");
         }
 
 
 
         if (fields.indexOf(Property.SongSources) > -1) {
             QB
-                .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-                .innerJoinAndSelect("playlistSongs.song", "song")
-                .innerJoinAndSelect("song.songSource", "songSource");
+                .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+                .leftJoinAndSelect("playlistSongs.song", "song")
+                .leftJoinAndSelect("song.songSource", "songSource");
         }
         else if (fields.indexOf(Property.Songs) > -1)
         {
             QB
-                .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
-                .innerJoinAndSelect("playlistSongs.song", "song");
+                .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+                .leftJoinAndSelect("playlistSongs.song", "song");
         }
         else if (fields.indexOf(Property.PlaylistSongs) > -1 ) {
-            QB.innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs");
+            QB.leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs");
         }
 
 
         QB
-            .where("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
             .getMany()
             .then((result) => {
                 callback(null, result);

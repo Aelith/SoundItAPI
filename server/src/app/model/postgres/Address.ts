@@ -1,11 +1,11 @@
-import {Table, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn, Entity} from "typeorm";
 import {User} from "./User";
 import {Country} from "./Country";
 import PostgresModel = require("./interfaces/PostgresModel");
 import construct = Reflect.construct;
 
 
-@Table("Address")
+@Entity("Address")
 export class Address extends PostgresModel {
 
 	@PrimaryGeneratedColumn()

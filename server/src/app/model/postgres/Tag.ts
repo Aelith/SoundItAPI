@@ -1,11 +1,11 @@
-import {Table, Column, JoinTable, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, JoinTable, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {Event} from "./Event";
 import {RoomTemplate} from "./RoomTemplate";
 import {Room} from "./Room";
 
 
-@Table("Tag")
+@Entity("Tag")
 export class Tag extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
@@ -15,17 +15,17 @@ export class Tag extends PostgresModel {
 	label: string;
 
 	//bi-directional many-to-many association to Event
-	@ManyToMany(type => Event, event=> event.tags, {nullable:true})
+	@ManyToMany(type => Event, event=> event.tags)
 	@JoinTable({name: "EventTag"})
 	events: Event[];
 	
 	//bi-directional many-to-many association to Room
-	@ManyToMany(type => Room, room=> room.tags, {nullable:true})
+	@ManyToMany(type => Room, room=> room.tags)
 	@JoinTable({name: "RoomTag"})
 	rooms: Room[];
 	
 	//bi-directional many-to-many association to Roomtemplate
-	@ManyToMany(type => RoomTemplate, roomTemplate=> roomTemplate.tags, {nullable:true})
+	@ManyToMany(type => RoomTemplate, roomTemplate=> roomTemplate.tags)
 	@JoinTable({name: "RoomTemplateTag"})
 	roomTemplates: RoomTemplate[];
 

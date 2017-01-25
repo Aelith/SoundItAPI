@@ -1,11 +1,11 @@
-import {Table, Column, JoinTable, PrimaryGeneratedColumn, ManyToMany, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, JoinTable, PrimaryGeneratedColumn, ManyToMany, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {RoomRight} from "./RoomRight";
 import {KnownUser} from "./KnownUser";
 import {Room} from "./Room";
 
 
-@Table("UserGroup")
+@Entity("UserGroup")
 export class UserGroup extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
@@ -23,7 +23,7 @@ export class UserGroup extends PostgresModel {
 	rooms: Room[];
 	
 	//bi-directional many-to-many association to Roomright
-	@ManyToMany(type => RoomRight, roomRight=> roomRight.userGroups, {nullable: true})
+	@ManyToMany(type => RoomRight, roomRight=> roomRight.userGroups)
 	@JoinTable({name: "UserGroupRoomRight"})
 	roomRights: RoomRight[];
 

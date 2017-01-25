@@ -1,9 +1,9 @@
-import {Table, Column, JoinTable, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, JoinTable, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {User} from "./User";
 
 
-@Table("UserRight")
+@Entity("UserRight")
 export class UserRight extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
@@ -13,7 +13,7 @@ export class UserRight extends PostgresModel {
 	label: string;
 
 	//bi-directional many-to-many association to User
-	@ManyToMany(type => User, user=> user.userRights, {nullable: true})
+	@ManyToMany(type => User, user=> user.userRights)
 	@JoinTable({name: "UserUserRight"})
 	users: User[];
 

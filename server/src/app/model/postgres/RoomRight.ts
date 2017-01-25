@@ -1,9 +1,9 @@
-import {Table, Column, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import PostgresModel = require("./interfaces/PostgresModel");
 import {UserGroup} from "./UserGroup";
 
 
-@Table("RoomRight")
+@Entity("RoomRight")
 export class RoomRight extends PostgresModel {
 
 	@PrimaryGeneratedColumn()
