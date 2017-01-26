@@ -27,10 +27,10 @@ export class User extends PostgresModel {
 	@Column({length: 100, nullable:true})
 	externalId: string;
 
-	@Column({length: 80})
+	@Column({length: 80, nullable:true})
 	firstName: string;
 
-	@Column({length: 80})
+	@Column({length: 80, nullable:true})
 	lastName: string;
 
 	@Column({length: 45})

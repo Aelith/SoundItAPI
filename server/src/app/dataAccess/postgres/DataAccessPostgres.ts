@@ -27,7 +27,7 @@ class DataAccessPostgres {
                 username: Constants.POSTGRES_USERNAME,
                 password: Constants.POSTGRES_PASSWORD,
                 database: Constants.POSTGRES_DBNAME,
-                /*version 0.0.7*/ //schemaName: Constants.POSTGRES_SCHEMA
+                schemaName: Constants.POSTGRES_SCHEMA
             },
             entities: [
                 //Country, User, Address
