@@ -4,6 +4,7 @@
 
 import jwt = require('jsonwebtoken');
 import Constants = require("../config/constants/constants");
+import UserToken = require("./UserToken");
 
 class LoginManager {
 
@@ -29,10 +30,15 @@ class LoginManager {
                     if (err) {
                         callback(err, null);
                     } else {
-                        // if everything is good, save to request for use in other routes
-                        //req.decoded = decoded;
 
-                        callback(null, decoded);
+                        var decoded = jwt.decode(token, {complete: true});
+
+                        var userToken = new UserToken();
+                        userToken.decoded = decoded;
+                        userToken.login = decoded.payload.username;
+                        userToken.password = decoded.payload.password;
+
+                        callback(null, userToken);
                     }
                 });
             }
@@ -43,20 +49,23 @@ class LoginManager {
         catch(e){
             callback(e, null);
         }
-
-
     };
 
     static getToken(req): any {
 
-        var token = jwt.sign({
-            username: req.body.login,
-            password: req.body.password
-        }, Constants.SECRET_TOKEN);
+        if(req.body.login != null && req.body.password != null) {
+            var token = jwt.sign({
+                username: req.body.login,
+                password: req.body.password
+            }, Constants.SECRET_TOKEN);
 
-        return token;
+            return token;
+        }
+        else
+        {
+            return null;
+        }
     }
-
 }
 
 export = LoginManager;

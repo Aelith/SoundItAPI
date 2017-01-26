@@ -13,6 +13,7 @@ class UserBusiness extends BaseBusiness<User> {
 
     constructor () {
         super(User);
+        this._userRepository = new UserRepository();
     }
 
     create (item: User, callback: (error: any, result: any) => void) {
@@ -45,6 +46,9 @@ class UserBusiness extends BaseBusiness<User> {
 
     getUserSettings (_id: string, callback: (error: any, result: any) => void) {
 
+    }
+    findByLogin (login: string, callback: (error: any, result: any) => void) {
+        this._userRepository.findByLogin(login, callback);
     }
 }
 

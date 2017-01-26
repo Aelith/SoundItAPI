@@ -16,16 +16,18 @@ class PlaylistRoutes {
     get routes () {
         var controller = this._playlistController;
 
-        //Show playlists
-        router.get("/playlists", controller.getPlaylists);
-        //Show playlist details
-        router.get("/playlist/:_playlistId", controller.getPlaylist);
         //Show playlist creation view
         router.get("/playlist/create", controller.getCreationView);
+
         //Show playlist edition view
         router.get("/playlist/:_playlistId/edit", controller.getEditionView);
         //Show playlist rate view
         router.get("/playlist/:_playlistId/rate/create", controller.getRateView);
+
+        //Show playlists
+        router.get("/playlists", controller.getPlaylists);
+        //Show playlist details
+        router.get("/playlist/:_playlistId", controller.getPlaylist);
 
         //Create playlist
         router.post("/playlist", controller.create);

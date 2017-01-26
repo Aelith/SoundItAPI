@@ -26,7 +26,7 @@ abstract class BaseBusiness<T extends PostgresModel> implements Read<T>, Write<T
     delete (item: T, callback: (error: any, result: any) => void){
         try {
             this.entity = item;
-            this.entity.deleted = true;
+            this.entity[0].deleted = true;
             this.update(this.entity, callback);
         }
         catch(e){

@@ -13,20 +13,18 @@ import LoginManager = require("../tools/LoginManager");
 
 class UserController implements IBaseController <UserBusiness> {
 
-    private userBusiness;
-
     constructor(){
-        this.userBusiness = new UserBusiness();
+
     }
 
     //Show user detail
     findById(req: express.Request, res: express.Response): void {
         try
         {
-            var _id: string = req.params._userId;
+            var _id: number = req.params._userId;
 
-            this.userBusiness.findById(_id, (error, result) => {
-            //var result = this.userBusiness.findById(_id, result);// => {
+            new UserBusiness().findById(_id, (error, result) => {
+            //var result = new UserBusiness().findById(_id, result);// => {
                 if(error)
                 {
                     logger.warn("findById : error", {"error": error});
@@ -59,7 +57,7 @@ class UserController implements IBaseController <UserBusiness> {
     retrieve(req: express.Request, res: express.Response): void {
         try
         {
-            // this.userBusiness.retrieve((error, result) => {
+            // new UserBusiness().retrieve((error, result) => {
             //     if(error)
             //     {
             //         logger.warn("retrieve : error", {"error": error});
@@ -106,7 +104,7 @@ class UserController implements IBaseController <UserBusiness> {
         {
             var _id: string = req.params._userId;
 
-            this.userBusiness.getUserSettings(_id, (error, result) => {
+            new UserBusiness().getUserSettings(_id, (error, result) => {
                 //var result = userBusiness.findById(_id, result);// => {
                 if(error)
                 {
@@ -158,14 +156,34 @@ class UserController implements IBaseController <UserBusiness> {
 
     login(req: express.Request, res: express.Response): void {
     //TODO
-        var token = LoginManager.getToken(req);
 
-        if(token){
-            res.send({"token": token});
-        }
-        else{
-            res.status(400).send({"result": "Bad Request"});
-        }
+        new UserBusiness().findByLogin(req.body.login, (error, result) => {
+
+            if(error)
+            {
+                logger.warn("login : error login unknown", {"error": error});
+                res.status(400).send({"result": "User unknown"});
+            }
+            else
+            {
+                if (req.body.login == result[0].login && req.body.password == result[0].password) {
+
+                    var token = LoginManager.getToken(req);
+
+                    if (token != null) {
+                        res.send({"token": token});
+                    }
+                    else {
+                        res.status(400).send({"result": "Bad Request or wrong login/password"});
+                    }
+                }
+                else
+                {
+                    logger.warn("login : error bad password", {"error": error});
+                    res.status(400).send({"result": "Bad Request or wrong password"});
+                }
+            }
+        });
     }
 
     //Create a user
@@ -173,7 +191,7 @@ class UserController implements IBaseController <UserBusiness> {
         //TODO
         try {
 
-            this.userBusiness.create(JSON.parse(req.body), (error, result) => {
+            new UserBusiness().create(JSON.parse(req.body), (error, result) => {
                 if (error) {
                     logger.warn("create : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});
@@ -224,7 +242,7 @@ class UserController implements IBaseController <UserBusiness> {
         //TODO
         try {
 
-            this.userBusiness.update(JSON.parse(req.body), (error, result) => {
+            new UserBusiness().update(JSON.parse(req.body), (error, result) => {
                 if (error) {
                     logger.warn("update : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});
@@ -249,7 +267,7 @@ class UserController implements IBaseController <UserBusiness> {
     delete(req: express.Request, res: express.Response): void {
         try {
 
-            this.userBusiness.delete(JSON.parse(req.body), (error, result) => {
+            new UserBusiness().delete(JSON.parse(req.body), (error, result) => {
                 if (error) {
                     logger.warn("delete : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});

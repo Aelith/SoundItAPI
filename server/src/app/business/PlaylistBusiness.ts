@@ -28,14 +28,7 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
 
     update (item: Playlist, callback: (error: any, result: any) => void) {
         //TODO
-        this.playlistRepository.findById(item.id, (err, res) => {
-            if(err) {
-                callback(err, res);
-            }
-            else {
-                this.playlistRepository.update(item, callback);
-            }
-        });
+        this.playlistRepository.update(item, callback);
     }
 
     delete(item: Playlist, callback: (error: any, result: any) => void){
@@ -43,18 +36,14 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
     }
 
     findById (_id: number, callback: (error: any, result: Playlist) => void) {
-        // this.playlistRepository.findById(_id, callback);
-        this.playlistRepository.findCustomHydratedById(_id, [PlaylistRepository.eProperty.Songs,PlaylistRepository.eProperty.PlaylistType],callback);
+        this.playlistRepository.findCustomHydratedById(_id, [PlaylistRepository.eProperty.Songs,PlaylistRepository.eProperty.SongSources],callback);
     }
 
-    getPlaylistsWithDetails(callback: (error: any, result: any) => void){
+    findByUserId(id: number, callback: (error: any, result: any) => void){
         //TODO
-
+        this.playlistRepository.findByUserId(id,callback);
     }
 
-    getUserSettings (_id: number, callback: (error: any, result: any) => void) {
-        //TODO
-    }
 }
 
 Object.seal(PlaylistBusiness);
