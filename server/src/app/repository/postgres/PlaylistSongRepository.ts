@@ -142,6 +142,26 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
     }
 
 
+
+    findNextSongForPlaylist(idPlaylist: number, callback: (error: any, result: any) => any){
+
+        DataAccessPostgres.connect()
+            .getRepository(PlaylistSong)
+            .createQueryBuilder(PlaylistSong.getTableName())
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .orderBy("\"" + PlaylistSong.getTableName() + "\".weight", "DESC")
+            .getOne()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+
     // Playlist by IdPlaylist, Room, User
 }
 
