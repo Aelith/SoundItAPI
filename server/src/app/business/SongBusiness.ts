@@ -23,6 +23,10 @@ class SongBusiness extends BaseBusiness<Song> {
         this.songRepository.findById(_id, callback);
     }
 
+    findByStreamSource (stream:string, source:string, callback: (error: any, result: Song) => void) {
+        this.songRepository.findByStreamAndSource(stream, SongRepository.eSongSource.Youtube, callback);
+    }
+
 }
 
 Object.seal(SongBusiness);
