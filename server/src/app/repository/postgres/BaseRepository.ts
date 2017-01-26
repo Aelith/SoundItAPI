@@ -28,7 +28,8 @@ class BaseRepository<T extends PostgresModel> implements  Read<T>, Write<T> {
         DataAccessPostgres.connect()
             .getRepository(this.entity)
             .createQueryBuilder(this.entity.getTableName())
-            .where("\"" + this.entity.getTableName() + "\".id = :id", {id: id})
+            .where("\"" + this.entity.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + this.entity.getTableName() + "\".id = :id", {id: id})
             .getOne()
             .then((result) => {
                 callback(null, result);
@@ -47,7 +48,9 @@ class BaseRepository<T extends PostgresModel> implements  Read<T>, Write<T> {
 
         DataAccessPostgres.connect()
             .getRepository(this.entity)
-            .find()
+            .createQueryBuilder(this.entity.getTableName())
+            .where("\"" + this.entity.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .getMany()
             .then((result) => {
                 callback(null, result);
             })

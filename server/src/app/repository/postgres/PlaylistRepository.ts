@@ -40,7 +40,7 @@ class PlaylistRepository extends BaseRepository<Playlist> {
         DataAccessPostgres.connect()
             .getRepository(Playlist)
             .createQueryBuilder(Playlist.getTableName())
-            .innerJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
+            .leftJoinAndSelect(Playlist.getTableName() + ".playlistSongs", "playlistSongs")
             .leftJoinAndSelect(Playlist.getTableName() + ".playlistType", "playlistType")
             .leftJoinAndSelect(Playlist.getTableName() + ".user", "user")
             .leftJoinAndSelect("playlistSongs.song", "song")

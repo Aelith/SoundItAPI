@@ -24,7 +24,8 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
             .andWhere("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
             .getOne()
             .then((result) => {
@@ -40,7 +41,8 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -55,7 +57,8 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .where("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -71,9 +74,10 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
-            .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
             .andWhere("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
             .getOne()
             .then((result) => {
@@ -89,9 +93,10 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
-            .where("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".playlist = :idP", {idP: idPlaylist})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -106,9 +111,10 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
-            .where("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + PlaylistSong.getTableName() + "\".song = :idS", {idS: idSong})
             .getMany()
             .then((result) => {
                 callback(null, result);
@@ -123,8 +129,9 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
             .createQueryBuilder(PlaylistSong.getTableName())
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
-            .innerJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".playlist", "playlists")
+            .leftJoinAndSelect(PlaylistSong.getTableName() + ".song", "songs")
+            .where("\"" + PlaylistSong.getTableName() + "\".deleted = :deleted", {deleted: false})
             .getMany()
             .then((result) => {
                 callback(null, result);
