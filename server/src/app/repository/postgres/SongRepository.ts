@@ -16,7 +16,7 @@ enum SongSource {
 
 class SongRepository extends BaseRepository<Song> {
 
-    public eSongSource = SongSource;
+    public static readonly eSongSource = SongSource;
 
     constructor() {
         super(Song);
