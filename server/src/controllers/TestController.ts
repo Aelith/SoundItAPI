@@ -9,6 +9,10 @@ import PlaylistSongRepository = require("./../app/repository/postgres/PlaylistSo
 import PlaylistRepository = require("./../app/repository/postgres/PlaylistRepository");
 import UserRepository = require("./../app/repository/postgres/UserRepository")
 import {PlaylistSong}  from "./../app/model/postgres/PlaylistSong";
+import SongRepository = require("../app/repository/postgres/SongRepository");
+import RoomTemplateRepository = require("../app/repository/postgres/RoomTemplateRepository");
+import RoomRepository = require("../app/repository/postgres/RoomRepository");
+import EventRepository = require("../app/repository/postgres/EventRepository");
 
 
 class TestController
@@ -16,8 +20,8 @@ class TestController
     retrieve(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : UserRepository = new UserRepository();
-            BR.retrieve((error, result) => {
+            let BR : EventRepository = new EventRepository();
+            BR.retrieveToCome((error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -39,8 +43,8 @@ class TestController
     retrieveHydrated(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : UserRepository = new UserRepository();
-            BR.retrieveHydrated((error, result) => {
+            let BR : EventRepository = new EventRepository();
+            BR.retrieveToComeHydrated((error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -62,10 +66,10 @@ class TestController
     findByIds(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistSongRepository = new PlaylistSongRepository();
+            let BR : SongRepository = new SongRepository();
             var id1 = req.params._id1;
             var id2 = req.params._id2;
-            BR.findByIds(id1, id2, (error, result) => {
+            BR.findByStreamAndSource(id1, id2, (error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -87,10 +91,10 @@ class TestController
     findHydratedByIds(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : PlaylistSongRepository = new PlaylistSongRepository();
+            let BR : SongRepository = new SongRepository();
             var id1 = req.params._id1;
             var id2 = req.params._id2;
-            BR.findHydratedByIds(id1, id2, (error, result) => {
+            BR.findHydratedByStreamAndSource(id1, id2, (error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -112,9 +116,9 @@ class TestController
     findById1(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : UserRepository = new UserRepository();
+            let BR : EventRepository = new EventRepository();
             var id = req.params._id;
-            BR.findById(id, (error, result) => {
+            BR.findToComeById(id, (error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -136,9 +140,9 @@ class TestController
     findHydratedById1(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : UserRepository = new UserRepository();
+            let BR : EventRepository = new EventRepository();
             var id = req.params._id;
-            BR.findHydratedById(id, (error, result) => {
+            BR.findToComeCustomHydratedById(id, [EventRepository.eProperty.RoomTemplate], (error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -162,9 +166,9 @@ class TestController
     findById2(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : UserRepository = new UserRepository();
+            let BR : RoomRepository = new RoomRepository();
             var id = req.params._id;
-            BR.findByLogin(id, (error, result) => {
+            BR.findById(id, (error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -186,9 +190,9 @@ class TestController
     findHydratedById2(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : UserRepository = new UserRepository();
+            let BR : RoomRepository = new RoomRepository();
             var id = req.params._id;
-            BR.findCustomHydratedById(id, [UserRepository.eProperty.SubscriptionPackageState, UserRepository.eProperty.Country, UserRepository.eProperty.UserType],(error, result) => {
+            BR.findCustomHydratedById(id, [RoomRepository.eProperty.RoomPlaylistPlaylistType, RoomRepository.eProperty.UserGroupRoomRight, RoomRepository.eProperty.RoomTemplateTag],(error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
