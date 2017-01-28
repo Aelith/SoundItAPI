@@ -83,7 +83,7 @@ class EventRepository extends BaseRepository<Event> {
             .leftJoinAndSelect(Event.getTableName() + ".roomTemplate", "roomTemplate")
             .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Event.getTableName() + "\".id = :id", {id: id})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -112,7 +112,7 @@ class EventRepository extends BaseRepository<Event> {
         QB
             .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Event.getTableName() + "\".id = :id", {id: id})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -201,7 +201,7 @@ class EventRepository extends BaseRepository<Event> {
             .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Event.getTableName() + "\".id = :id", {id: id})
             .andWhere("date_trunc('day', \"" + Event.getTableName() + "\".\"eventDate\") >= current_date")
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -219,7 +219,7 @@ class EventRepository extends BaseRepository<Event> {
             .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Event.getTableName() + "\".id = :id", {id: id})
             .andWhere("date_trunc('day', \"" + Event.getTableName() + "\".\"eventDate\") >= current_date")
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -249,6 +249,78 @@ class EventRepository extends BaseRepository<Event> {
             .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Event.getTableName() + "\".id = :id", {id: id})
             .andWhere("date_trunc('day', \"" + Event.getTableName() + "\".\"eventDate\") >= current_date")
+            .getOne()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+
+    /********** *********/
+    /*** Find By User ***/
+    /********** *********/
+    finddByUser (idUser: number, callback: (error: any, result: any) => any){
+        DataAccessPostgres.connect()
+            .getRepository(Event)
+            .createQueryBuilder(Event.getTableName())
+            .leftJoin(Event.getTableName() + ".roomTemplate", "roomTemplate")
+            .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"roomTemplate\".user = :idU", {idU: idUser})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+
+    findHydratedByUser (idUser: number, callback: (error: any, result: any) => any){
+        DataAccessPostgres.connect()
+            .getRepository(Event)
+            .createQueryBuilder(Event.getTableName())
+            .leftJoinAndSelect(Event.getTableName() + ".tags", "tags")
+            .leftJoinAndSelect(Event.getTableName() + ".roomTemplate", "roomTemplate")
+            .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"roomTemplate\".user = :idU", {idU: idUser})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+    findCustomHydratedByUser (idUser: number, fields: Property[], callback: (error: any, result: any) => any){
+        let QB = DataAccessPostgres.connect()
+            .getRepository(Event)
+            .createQueryBuilder(Event.getTableName());
+
+
+        if (fields.indexOf(Property.Tags) > -1) {
+            QB
+                .leftJoinAndSelect(Event.getTableName() + ".tags", "tags");
+        }
+
+        if (fields.indexOf(Property.RoomTemplate) > -1) {
+            QB
+                .leftJoinAndSelect(Event.getTableName() + ".roomTemplate", "roomTemplate");
+        }
+        else
+        {
+            QB
+                .leftJoin(Event.getTableName() + ".roomTemplate", "roomTemplate");
+        }
+
+
+        QB
+            .where("\"" + Event.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"roomTemplate\".user = :idU", {idU: idUser})
             .getMany()
             .then((result) => {
                 callback(null, result);

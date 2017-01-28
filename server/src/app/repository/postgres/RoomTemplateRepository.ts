@@ -148,7 +148,7 @@ class RoomTemplateRepository extends BaseRepository<RoomTemplate> {
             .leftJoinAndSelect(RoomTemplate.getTableName() + ".rooms", "rooms")
             .where("\"" + RoomTemplate.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + RoomTemplate.getTableName() + "\".id = :id", {id: id})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -222,7 +222,7 @@ class RoomTemplateRepository extends BaseRepository<RoomTemplate> {
         QB
             .where("\"" + RoomTemplate.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + RoomTemplate.getTableName() + "\".id = :id", {id: id})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })

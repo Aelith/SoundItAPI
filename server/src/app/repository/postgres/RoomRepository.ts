@@ -179,7 +179,7 @@ class RoomRepository extends BaseRepository<Room> {
             .leftJoinAndSelect("userGroup.roomRights", "roomRights")
             .where("\"" + Room.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Room.getTableName() + "\".id = :id", {id: id})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -275,7 +275,7 @@ class RoomRepository extends BaseRepository<Room> {
         QB
             .where("\"" + Room.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Room.getTableName() + "\".id = :id", {id: id})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -448,7 +448,7 @@ class RoomRepository extends BaseRepository<Room> {
             .where("\"" + Room.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Room.getTableName() + "\".active = :active", {active: true})
             .andWhere("\"roomTemplate\".user = :user", {user: userId})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -475,7 +475,7 @@ class RoomRepository extends BaseRepository<Room> {
             .where("\"" + Room.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Room.getTableName() + "\".active = :active", {active: true})
             .andWhere("\"roomTemplate\".user = :user", {user: userId})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })

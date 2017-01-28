@@ -126,7 +126,7 @@ class PlaylistRepository extends BaseRepository<Playlist> {
             .leftJoinAndSelect("song.songSource", "songSource")
             .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Playlist.getTableName() + "\".id = :idP", {idP: idPlaylist})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -177,7 +177,7 @@ class PlaylistRepository extends BaseRepository<Playlist> {
         QB
             .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Playlist.getTableName() + "\".id = :idP", {idP: idPlaylist})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
