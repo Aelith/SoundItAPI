@@ -9,20 +9,21 @@ import SongRepository = require("../repository/postgres/SongRepository");
 
 class SongSourceBusiness extends BaseBusiness<SongSource> {
 
-    private songRepository: SongSourceRepository;
+    private songSourceRepository: SongSourceRepository;
 
     constructor () {
         super(SongSource);
-        this.songRepository = new SongSourceRepository();
+        this.songSourceRepository = new SongSourceRepository();
     }
 
     retrieve (callback: (error: any, result: any) => void) {
-        this.songRepository.retrieve(callback);
+        this.songSourceRepository.retrieve(callback);
     }
 
     findById (_id: number, callback: (error: any, result: SongSource) => void) {
-        this.songRepository.findById(_id, callback);
+        this.songSourceRepository.findById(_id, callback);
     }
+
 
     getSource(connector: string) : any {
 

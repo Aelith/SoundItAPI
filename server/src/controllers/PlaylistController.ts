@@ -14,7 +14,6 @@ import {PlaylistSong} from "../app/model/postgres/PlaylistSong";
 import SongRepository = require("../app/repository/postgres/SongRepository");
 import PlaylistSongRepository = require("../app/repository/postgres/PlaylistSongRepository");
 import SongSourceRepository = require("../app/repository/postgres/SongSourceRepository");
-import {SongSource} from "../app/model/postgres/SongSource";
 import SongBusiness = require("../app/business/SongBusiness");
 import {Song} from "../app/model/postgres/Song";
 import SongSourceBusiness = require("../app/business/SongSourceBusiness");
@@ -28,20 +27,18 @@ class PlaylistController {
     }
 
     //Show playlists
-    getPlaylists(req: any, res: express.Response): void {
+    getPlaylists(req: express.Request, res: express.Response): void {
         try
         {
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
 
-                var playlistBusiness = new PlaylistBusiness();
-
-                playlistBusiness.findByUserId(result[0].id, (error, result) => {
+                new PlaylistBusiness().findByUserId(result.id, (error, result) => {
                     if (error) {
                         logger.warn("PlaylistController.getPlaylists -> findById : error", error);
                         res.status(400).send({"result": "Bad Request"});
                     }
-                    else {
-
+                    else
+                    {
                         var playlists = [];
 
                         for (var i = 0; i < result.length; i++) {
@@ -68,14 +65,12 @@ class PlaylistController {
      * @param req
      * @param res
      */
-    getPlaylist(req: any, res: express.Response): void {
+    getPlaylist(req: express.Request, res: express.Response): void {
         try
         {
-            var _id: number = req.params._playlistId;
+            let _id: number = req.params._playlistId;
 
-            var playlistBusiness = new PlaylistBusiness();
-
-            playlistBusiness.findById(_id, (error, result) => {
+            new PlaylistBusiness().findById(_id, (error, result) => {
                 if(error)
                 {
                     logger.warn("PlaylistController.getPlaylist -> findById : error", error);
@@ -84,26 +79,26 @@ class PlaylistController {
                 else
                 {
                     var object = {};
-                    object["id"] = result[0].id;
-                    object["name"] = result[0].name;
-                    object["description"] = result[0].description;
+                    object["id"] = result.id;
+                    object["name"] = result.name;
+                    object["description"] = result.description;
 
                     var songs = [];
 
-                    for(var i = 0; i < result[0].playlistSongs.length; i++)
+                    for(var i = 0; i < result.playlistSongs.length; i++)
                     {
                         var song = {};
-                        song["id"] = result[0].playlistSongs[i].song.id;
-                        song["title"] = result[0].playlistSongs[i].song.title;
-                        song["artist"] = result[0].playlistSongs[i].song.artist;
-                        song["duration"] = result[0].playlistSongs[i].song.duration;
-                        song["album"] = result[0].playlistSongs[i].song.album;
-                        song["connector"] = result[0].playlistSongs[i].song.songSource.label;
-                        song["stream"] = result[0].playlistSongs[i].song.stream;
+                        song["id"] = result.playlistSongs[i].song.id;
+                        song["title"] = result.playlistSongs[i].song.title;
+                        song["artist"] = result.playlistSongs[i].song.artist;
+                        song["duration"] = result.playlistSongs[i].song.duration;
+                        song["album"] = result.playlistSongs[i].song.album;
+                        song["connector"] = result.playlistSongs[i].song.songSource.label;
+                        song["stream"] = result.playlistSongs[i].song.stream;
                         songs.push(song);
                     }
 
-                    object["songs"] = PlaylistController.sortSongByRank(songs,result[0].songRank);
+                    object["songs"] = PlaylistController.sortSongByRank(songs,result.songRank);
 
                     res.json(object);
                 }
@@ -137,11 +132,9 @@ class PlaylistController {
     getEditionView(req: express.Request, res: express.Response): void {
         try
         {
-            var _id: number = req.params._playlistId;
+            let _id: number = req.params._playlistId;
 
-            var playlistBusiness = new PlaylistBusiness();
-
-            playlistBusiness.findById(_id, (error, result) => {
+            new PlaylistBusiness().findById(_id, (error, result) => {
                 if(error)
                 {
                     logger.warn("PlaylistController.getEditionView -> findById : error", error);
@@ -150,9 +143,9 @@ class PlaylistController {
                 else
                 {
                     var object = {};
-                    object["id"] = result[0].id;
-                    object["name"] = result[0].name;
-                    object["description"] = result[0].description;
+                    object["id"] = result.id;
+                    object["name"] = result.name;
+                    object["description"] = result.description;
 
                     res.json(object);
                 }
@@ -170,7 +163,7 @@ class PlaylistController {
     }
 
     //Create playlist
-    create(req: any, res: express.Response): void {
+    create(req: express.Request, res: express.Response): void {
         try {
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
 
@@ -184,7 +177,7 @@ class PlaylistController {
                 playlist.songRank = '';
                 playlist.playlistType = playlistType;
                 playlist.temporary = false;
-                playlist.user = result[0];
+                playlist.user = result;
 
                 new PlaylistBusiness().create(playlist, (error, result) => {
                     if (error) {
@@ -208,146 +201,223 @@ class PlaylistController {
         //TODO
     }
 
-    //Update a playlist
-    update(req: any, res: express.Response): void {
-        //TODO
+    //Update a playlist and all its sub elements
+    update(req: express.Request, res: express.Response): void {
         try {
 
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
 
-                var playlist = new Playlist();
-                var rank = '';
-
-                //Création des songs si elles n'existent pas
-                for(var i = 0; i < req.body.songs.length; i++)
-                {
-                    rank += '"' + (i+1) + '": "' + req.body.songs[i].id + '", ';
-
-                    var source = new SongSourceBusiness().getSource(req.body.songs[i].connector);
-
-                    new SongBusiness().findByStreamSource(req.body.songs[i].stream, source,(error, result) => {
-                        //Song inexistante donc on la crée
-                        if (error)
-                        {
-                            var song = new Song();
-
-                            song.title = req.body.songs[i].title;
-                            song.album = req.body.songs[i].album;
-                            song.artist = req.body.songs[i].artist;
-                            song.duration = req.body.songs[i].duration;
-                            song.stream = req.body.songs[i].stream;
-
-                            new SongSourceBusiness().findById(req.body.songs[i].id,(error, result) => {
-                                if (error)
-                                {
-                                    logger.warn("PlaylistController.update -> findById songSource : error", error);
-                                }
-                                else
-                                {
-                                    song.songSource = result;
-                                }
-                            });
-                        }
-                    });
-                }
-
-                //Update playlist
-
-                var playlistType = new PlaylistType();
-                playlistType.label = "Playlist";
-                playlistType.id = 1;
-
-                playlist.id = req.body.id;
-                playlist.name = req.body.name;
-                playlist.description = req.body.description;
-                playlist.temporary = false;
-                playlist.user = result[0];
-
-                playlist.playlistType = playlistType;
-
-                rank = rank.substring(0,rank.length-2);
-
-                playlist.songRank = '{' + rank + '}';
-
-                new PlaylistBusiness().update(playlist,(error, result) => {
-
-                    if(error)
-                    {
-                        logger.warn("PlaylistController.update -> update playlist : error", error);
+                    if (error) {
+                        logger.warn("PlaylistController.update -> findByLogin : error", error);
                         res.status(400).send({"result": "Bad Request"});
                     }
                     else
                     {
-                        playlist = result;
-                    }
-                });
+                        let playlist = new Playlist();
+                        let songsRank = [];
+                        let songs = req.body.songs;
 
-                // //Suppression de tous les playlistSongs
-                // new PlaylistSongBusiness().findByPlaylistId(playlist.id, (error, result) => {
-                //
-                //     for (var i = 0; i < result.length; i++)
-                //     {
-                //         new PlaylistSongBusiness().delete(result[i], (error, result) => {
-                //             if(error) {
-                //                 logger.warn("PlaylistController.update -> delete playlistSong : error", error);
-                //             }
-                //         });
-                //     }
-                // });
+                        let playlistType = new PlaylistType();
+                        playlistType.label = "Playlist";
 
-                //Création playlistSongs pour les liaisons
+                        playlist.id = req.body.id;
+                        playlist.name = req.body.name;
+                        playlist.description = req.body.description;
+                        playlist.temporary = false;
+                        playlist.user = result;
 
-                for(var i = 0; i < req.body.songs.length; i++){
+                        playlist.playlistType = playlistType;
 
-                    var playlistSong = new PlaylistSong();
-                    playlistSong.addDate = new Date();
-                    playlistSong.playcount = 0;
-                    playlistSong.weight = 0;
-                    playlistSong.totalweight = 0;
-                    playlistSong.pending = false;
-                    playlistSong.playlist = playlist;
-
-                    var source = new SongSourceBusiness().getSource(req.body.songs[i].connector);
-
-                    new SongBusiness().findByStreamSource(req.body.songs[i].stream, source,(error, result) => {
-                        if (error)
+                        for (let index = 0; index < songs.length; index++)
                         {
-                            logger.warn("PlaylistController.update -> findByStreamSource playlistSong : error", error);
-                        }
-                        else
-                        {
-                            playlistSong.song = result;
+                            let source = new SongSourceBusiness().getSource(songs[index].connector);
 
-                            new PlaylistSongBusiness().create(playlistSong,(error, result) => {
-                                if (error) {
-                                    logger.warn("PlaylistController.update : playlistSong creation error", error);
-                                }
-                                else
+                            new SongBusiness().findByStreamSource(songs[index].stream, source, (error, result) => {
+
+                                if (error)
                                 {
-                                    console.log(result);
+                                    logger.warn("PlaylistController.update -> findById songSource : error", error);
+                                    res.status(400).send({"result": "Bad Request"});
+                                }
+                                //LA SONG N'EXISTE PAS
+                                else if (result == undefined)
+                                {
+                                    let song = new Song();
+                                    song.title = songs[index].title;
+                                    song.album = songs[index].album;
+                                    song.artist = songs[index].artist;
+                                    song.duration = songs[index].duration;
+                                    song.stream = songs[index].stream;
+
+                                    new SongSourceBusiness().findById(source, (error, result) => {
+                                        if (error)
+                                        {
+                                            logger.warn("PlaylistController.update -> findById songSource : error", error);
+                                        }
+                                        else
+                                        {
+                                            song.songSource = result;
+
+                                            //CREATION DE LA SONG
+                                            new SongBusiness().create(song, (error, result) => {
+                                                if (error)
+                                                {
+                                                    logger.warn("PlaylistController.update -> create song : error", error);
+                                                }
+                                                else
+                                                {
+                                                    songsRank = PlaylistController.insertSongAtIndex(songsRank, index, result);
+
+                                                    playlist.songRank = PlaylistController.getSongRankFromSongs(songsRank);
+
+                                                    new PlaylistSongBusiness().findByIds(playlist.id, song.id, (error, result) => {
+                                                        if (error)
+                                                        {
+                                                            logger.warn("PlaylistController.update : playlistSong creation error", error);
+                                                            res.status(400).send({"result": "Bad Request"});
+                                                        }
+                                                        //LA PLAYLISTSONG N'EXISTE PAS
+                                                        else if (result == undefined)
+                                                        {
+                                                            //CREATION DE LA PLAYLISTSONG
+                                                            let playlistSong = new PlaylistSong();
+                                                            playlistSong.addDate = new Date();
+                                                            playlistSong.playcount = 0;
+                                                            playlistSong.weight = 0;
+                                                            playlistSong.totalweight = 0;
+                                                            playlistSong.pending = false;
+                                                            playlistSong.playlist = playlist;
+                                                            playlistSong.song = song;
+
+                                                            new PlaylistSongBusiness().create(playlistSong, (error, result) => {
+                                                                if (error)
+                                                                {
+                                                                    logger.warn("PlaylistController.update : playlistSong creation error", error);
+                                                                    res.status(400).send({"result": "Bad Request"});
+                                                                }
+                                                                else
+                                                                {
+                                                                    //UPDATE DE LA PLAYLIST
+                                                                    new PlaylistBusiness().update(playlist, (error, result) => {
+                                                                        if (error)
+                                                                        {
+                                                                            logger.warn("PlaylistController.update -> update playlist : error", error);
+                                                                            res.status(400).send({"result": "Bad Request"});
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            playlist = result;
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                        }
+                                                        else //LA PLAYLISTSONG EXISTE
+                                                        {
+                                                            //UPDATE DE LA PLAYLIST
+                                                            new PlaylistBusiness().update(playlist, (error, result) => {
+                                                                if (error)
+                                                                {
+                                                                    logger.warn("PlaylistController.update -> update playlist : error", error);
+                                                                    res.status(400).send({"result": "Bad Request"});
+                                                                }
+                                                                else
+                                                                {
+                                                                    playlist = result;
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                                else //LA SONG EXISTE
+                                {
+                                    let song = result;
+
+                                    songsRank = PlaylistController.insertSongAtIndex(songsRank, index, song);
+
+                                    playlist.songRank = PlaylistController.getSongRankFromSongs(songsRank);
+
+                                    new PlaylistSongBusiness().findByIds(playlist.id, song.id, (error, result) => {
+                                        if (error)
+                                        {
+                                            logger.warn("PlaylistController.update : playlistSong creation error", error);
+                                            res.status(400).send({"result": "Bad Request"});
+                                        }
+                                        //LA PLAYLISTSONG N'EXISTE PAS
+                                        else if (result == undefined)
+                                        {
+                                            //CREATION DE LA PLAYLISTSONG
+                                            let playlistSong = new PlaylistSong();
+                                            playlistSong.addDate = new Date();
+                                            playlistSong.playcount = 0;
+                                            playlistSong.weight = 0;
+                                            playlistSong.totalweight = 0;
+                                            playlistSong.pending = false;
+                                            playlistSong.playlist = playlist;
+                                            playlistSong.song = song;
+
+                                            new PlaylistSongBusiness().create(playlistSong, (error, result) => {
+                                                if (error)
+                                                {
+                                                    logger.warn("PlaylistController.update : playlistSong creation error", error);
+                                                    res.status(400).send({"result": "Bad Request"});
+                                                }
+                                                else
+                                                {
+                                                    //UPDATE DE LA PLAYLIST
+                                                    new PlaylistBusiness().update(playlist, (error, result) => {
+                                                        if (error)
+                                                        {
+                                                            logger.warn("PlaylistController.update -> update playlist : error", error);
+                                                            res.status(400).send({"result": "Bad Request"});
+                                                        }
+                                                        else
+                                                        {
+                                                            playlist = result;
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                        else //LA PLAYLISTSONG EXISTE
+                                        {
+                                            //UPDATE DE LA PLAYLIST
+                                            new PlaylistBusiness().update(playlist, (error, result) => {
+                                                if (error)
+                                                {
+                                                    logger.warn("PlaylistController.update -> update playlist : error", error);
+                                                    res.status(400).send({"result": "Bad Request"});
+                                                }
+                                                else
+                                                {
+                                                    playlist = result;
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
                             });
                         }
-                    });
+                        res.status(200).send({"result": "Updated"});
+                    }
                 }
-            });
-
-            res.status(200).send({"result": "Updated"});
+            )
         }
-        catch (e)  {
-            logger.error("PlaylistController.update : error", e);
+        catch(error){
+            logger.warn("PlaylistController.update -> catch : error", error);
             res.status(400).send({"result": "Bad Request"});
-
         }
     }
 
     //Delete a playlist
     delete(req: express.Request, res: express.Response): void {
-        //TODO
-        var playlistBusiness = new PlaylistBusiness();
-
         try {
-            playlistBusiness.findById(req.params._playlistId, (error, result) => {
+
+            new PlaylistBusiness().findById(req.params._playlistId, (error, result) => {
                 if(error)
                 {
                     logger.warn("PlaylistController.delete -> findById : error", error);
@@ -355,8 +425,9 @@ class PlaylistController {
                 }
                 else
                 {
-                    playlistBusiness.delete(result, (error, result) => {
-                        if (error) {
+                    new PlaylistBusiness().delete(result, (error, result) => {
+                        if (error)
+                        {
                             logger.warn("PlaylistController.delete : error", error);
                             res.status(400).send({"result": "Bad Request"});
                         }
@@ -373,30 +444,60 @@ class PlaylistController {
         }
     }
 
-    static sortSongByRank(songs,songRank): any{
+    static sortSongByRank(songs : Song[],songRank): Song[] {
 
-        var songRankObject = JSON.parse(songRank);
-        var songsSorted = [];
+        let songsSorted = [];
+        let ranks = [];
+        ranks = songRank.split(',');
 
-        for(var i = 0; i < songs.length; i++)
+        for(let i = 0; i < songs.length; i++)
         {
-            for (var key in songRankObject) {
+            for (let j = 0; j < ranks.length; j++) {
 
-                if (songRankObject.hasOwnProperty(key)) {
+                if(songs[i].id == ranks[j]) {
 
-                    if(songs[i].id == songRankObject[key])
-                    {
-                        var index: number = 0;
-                        index = +key;
-                        index -= 1;
+                    let index: number = 0;
+                    index = j;
 
-                        songsSorted[index] = songs[i];
-                    }
+                    songsSorted[index] = songs[i];
                 }
             }
         }
-
         return songsSorted;
+    }
+
+    static insertSongAtIndex(songs: Song[], index, song) : Song[] {
+
+        songs.splice(index, 0, song);
+
+        return songs;
+    }
+
+    static deleteSongById(songs: Song[], id: number) : Song[] {
+
+
+        let index = songs.findIndex((song) => {
+            return song.id == id;
+        });
+
+        if(index != -1)
+        {
+            songs.splice(index, 1);
+        }
+
+        return songs;
+    }
+
+    static getSongRankFromSongs(songs: Song[]) : string {
+
+        let songRank = '';
+
+        for(let i = 0; i < songs.length; i++)
+        {
+            songRank += songs[i].id + ', ';
+        }
+
+        return songRank.substring(0,songRank.length - 2);
     }
 
 }

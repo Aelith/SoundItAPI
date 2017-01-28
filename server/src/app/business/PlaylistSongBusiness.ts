@@ -35,6 +35,10 @@ class PlaylistSongBusiness extends BaseBusiness<PlaylistSong> {
     findByPlaylistId (_id: number, callback: (error: any, result: PlaylistSong[]) => void) {
         this.playlistSongRepository.findByPlaylistId(_id,callback);
     }
+
+    findByIds(idPlaylist: number,idSong: number, callback: (error: any, result: any) => void){
+        this.playlistSongRepository.findByIds(idPlaylist,idSong,callback);
+    }
 }
 
 Object.seal(PlaylistSongBusiness);

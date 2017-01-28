@@ -27,7 +27,6 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
     }
 
     update (item: Playlist, callback: (error: any, result: any) => void) {
-        //TODO
         this.playlistRepository.update(item, callback);
     }
 
@@ -40,7 +39,6 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
     }
 
     findByUserId(id: number, callback: (error: any, result: any) => void){
-        //TODO
         this.playlistRepository.findByUserId(id,callback);
     }
 

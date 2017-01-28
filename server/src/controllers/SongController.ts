@@ -30,5 +30,11 @@ class SongController  {
 
     }
 
+    getNextSong (req: express.Request, res: express.Response): void {
+    //TODO
+
+}
+
+
 }
 export = SongController;

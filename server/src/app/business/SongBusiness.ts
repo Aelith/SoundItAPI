@@ -15,6 +15,10 @@ class SongBusiness extends BaseBusiness<Song> {
         this.songRepository = new SongRepository();
     }
 
+    create (item: Song, callback: (error: any, result: any) => void) {
+        this.songRepository.create(item, callback);
+    }
+
     retrieve (callback: (error: any, result: any) => void) {
         this.songRepository.retrieve(callback);
     }
