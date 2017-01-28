@@ -8,7 +8,7 @@ import IBaseController = require("./interfaces/BaseController");
 import logger = require("./../tools/Logger");
 import jwt = require('jsonwebtoken');
 import Constants = require("../config/constants/constants");
-import LoginManager = require("../tools/LoginManager");
+import {LoginManager} from "../tools/LoginManager";
 
 
 class UserController implements IBaseController <UserBusiness> {

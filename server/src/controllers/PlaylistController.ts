@@ -9,7 +9,6 @@ import PlaylistBusiness = require("../app/business/PlaylistBusiness");
 import {Playlist} from "../app/model/postgres/Playlist";
 import LoginManager = require("../tools/LoginManager");
 import {PlaylistType} from "../app/model/postgres/PlaylistType";
-import UserToken = require("../tools/UserToken");
 import UserBusiness = require("../app/business/UserBusiness");
 import {PlaylistSong} from "../app/model/postgres/PlaylistSong";
 import SongRepository = require("../app/repository/postgres/SongRepository");
@@ -29,52 +28,33 @@ class PlaylistController {
     }
 
     //Show playlists
-    getPlaylists(req: express.Request, res: express.Response): void {
+    getPlaylists(req: any, res: express.Response): void {
         try
         {
-            LoginManager.decodeToken(req,res, (error, result) => {
-                if(error)
-                {
-                    logger.warn("PlaylistController.getPlaylists -> decodeToken : error", error);
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else
-                {
-                    if (result != null && result.decoded) {
+            new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
 
-                        var userToken: UserToken = result;
+                var playlistBusiness = new PlaylistBusiness();
 
-                        new UserBusiness().findByLogin(userToken.login, (error, result) => {
-
-                            var playlistBusiness = new PlaylistBusiness();
-
-                            playlistBusiness.findByUserId(result[0].id, (error, result) => {
-                                if (error) {
-                                    logger.warn("PlaylistController.getPlaylists -> findById : error", error);
-                                    res.status(400).send({"result": "Bad Request"});
-                                }
-                                else {
-
-                                    var playlists = [];
-
-                                    for (var i = 0; i < result.length; i++) {
-                                        var object = {};
-                                        object["id"] = result[i].id;
-                                        object["name"] = result[i].name;
-                                        object["description"] = result[i].description;
-                                        playlists.push(object);
-                                    }
-
-                                    res.json(playlists);
-                                }
-                            });
-                        });
+                playlistBusiness.findByUserId(result[0].id, (error, result) => {
+                    if (error) {
+                        logger.warn("PlaylistController.getPlaylists -> findById : error", error);
+                        res.status(400).send({"result": "Bad Request"});
                     }
-                    else
-                    {
-                        res.send("Failed authentication")
+                    else {
+
+                        var playlists = [];
+
+                        for (var i = 0; i < result.length; i++) {
+                            var object = {};
+                            object["id"] = result[i].id;
+                            object["name"] = result[i].name;
+                            object["description"] = result[i].description;
+                            playlists.push(object);
+                        }
+
+                        res.json(playlists);
                     }
-                }
+                });
             });
         }
         catch (e)  {
@@ -88,62 +68,44 @@ class PlaylistController {
      * @param req
      * @param res
      */
-    getPlaylist(req: express.Request, res: express.Response): void {
+    getPlaylist(req: any, res: express.Response): void {
         try
         {
             var _id: number = req.params._playlistId;
 
-            LoginManager.decodeToken(req,res, (error, result) => {
+            var playlistBusiness = new PlaylistBusiness();
+
+            playlistBusiness.findById(_id, (error, result) => {
                 if(error)
                 {
-                    logger.warn("PlaylistController.getPlaylist -> decodeToken : error", error);
+                    logger.warn("PlaylistController.getPlaylist -> findById : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
                 {
-                    if (result != null && result.decoded) {
+                    var object = {};
+                    object["id"] = result[0].id;
+                    object["name"] = result[0].name;
+                    object["description"] = result[0].description;
 
-                        var userToken: UserToken = result;
-                        var playlistBusiness = new PlaylistBusiness();
+                    var songs = [];
 
-                        playlistBusiness.findById(_id, (error, result) => {
-                            if(error)
-                            {
-                                logger.warn("PlaylistController.getPlaylist -> findById : error", error);
-                                res.status(400).send({"result": "Bad Request"});
-                            }
-                            else
-                            {
-                                var object = {};
-                                object["id"] = result[0].id;
-                                object["name"] = result[0].name;
-                                object["description"] = result[0].description;
-
-                                var songs = [];
-
-                                for(var i = 0; i < result[0].playlistSongs.length; i++)
-                                {
-                                    var song = {};
-                                    song["id"] = result[0].playlistSongs[i].song.id;
-                                    song["title"] = result[0].playlistSongs[i].song.title;
-                                    song["artist"] = result[0].playlistSongs[i].song.artist;
-                                    song["duration"] = result[0].playlistSongs[i].song.duration;
-                                    song["album"] = result[0].playlistSongs[i].song.album;
-                                    song["connector"] = result[0].playlistSongs[i].song.songSource.label;
-                                    song["stream"] = result[0].playlistSongs[i].song.stream;
-                                    songs.push(song);
-                                }
-
-                                object["songs"] = PlaylistController.sortSongByRank(songs,result[0].songRank);
-
-                                res.json(object);
-                            }
-                        });
-                    }
-                    else
+                    for(var i = 0; i < result[0].playlistSongs.length; i++)
                     {
-                        res.send("Failed authentication")
+                        var song = {};
+                        song["id"] = result[0].playlistSongs[i].song.id;
+                        song["title"] = result[0].playlistSongs[i].song.title;
+                        song["artist"] = result[0].playlistSongs[i].song.artist;
+                        song["duration"] = result[0].playlistSongs[i].song.duration;
+                        song["album"] = result[0].playlistSongs[i].song.album;
+                        song["connector"] = result[0].playlistSongs[i].song.songSource.label;
+                        song["stream"] = result[0].playlistSongs[i].song.stream;
+                        songs.push(song);
                     }
+
+                    object["songs"] = PlaylistController.sortSongByRank(songs,result[0].songRank);
+
+                    res.json(object);
                 }
             });
         }
@@ -157,29 +119,12 @@ class PlaylistController {
     getCreationView(req: express.Request, res: express.Response): void {
         try
         {
-            LoginManager.decodeToken(req,res, (error, result) => {
-                if(error)
-                {
-                    logger.warn("PlaylistController.getCreationView -> decodeToken : error", error);
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else
-                {
-                    if (result != null && result.decoded) {
+            var playlist = {};
 
-                        var playlist = {};
+            playlist["name"] = '';
+            playlist["description"] = '';
 
-                        playlist["name"] = '';
-                        playlist["description"] = '';
-
-                        res.json(playlist);
-                    }
-                    else
-                    {
-                        res.send("Failed authentication")
-                    }
-                }
-            });
+            res.json(playlist);
 
         }
         catch (e)  {
@@ -194,39 +139,22 @@ class PlaylistController {
         {
             var _id: number = req.params._playlistId;
 
-            LoginManager.decodeToken(req,res, (error, result) => {
+            var playlistBusiness = new PlaylistBusiness();
+
+            playlistBusiness.findById(_id, (error, result) => {
                 if(error)
                 {
-                    logger.warn("PlaylistController.getEditionView -> decodeToken : error", error);
+                    logger.warn("PlaylistController.getEditionView -> findById : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
                 {
-                    if (result != null && result.decoded) {
+                    var object = {};
+                    object["id"] = result[0].id;
+                    object["name"] = result[0].name;
+                    object["description"] = result[0].description;
 
-                        var playlistBusiness = new PlaylistBusiness();
-
-                        playlistBusiness.findById(_id, (error, result) => {
-                            if(error)
-                            {
-                                logger.warn("PlaylistController.getEditionView -> findById : error", error);
-                                res.status(400).send({"result": "Bad Request"});
-                            }
-                            else
-                            {
-                                var object = {};
-                                object["id"] = result[0].id;
-                                object["name"] = result[0].name;
-                                object["description"] = result[0].description;
-
-                                res.json(object);
-                            }
-                        })
-                    }
-                    else
-                    {
-                        res.send("Failed authentication")
-                    }
+                    res.json(object);
                 }
             });
         }
@@ -242,48 +170,30 @@ class PlaylistController {
     }
 
     //Create playlist
-    create(req: express.Request, res: express.Response): void {
+    create(req: any, res: express.Response): void {
         try {
+            new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
 
-            LoginManager.decodeToken(req, res, (error, result) => {
-                if (error) {
-                    logger.warn("PlaylistController.create -> decodeToken : error", error);
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else {
-                    if (result != null && result.decoded) {
+                var playlist = new Playlist();
+                var playlistType = new PlaylistType();
+                playlistType.label = "Playlist";
+                playlistType.id = 1;
 
-                        var userToken: UserToken = result;
+                playlist.name = req.body.name;
+                playlist.description = req.body.description;
+                playlist.songRank = '';
+                playlist.playlistType = playlistType;
+                playlist.temporary = false;
+                playlist.user = result[0];
 
-                        new UserBusiness().findByLogin(userToken.login, (error, result) => {
-
-                            var playlist = new Playlist();
-                            var playlistType = new PlaylistType();
-                            playlistType.label = "Playlist";
-                            playlistType.id = 1;
-
-                            playlist.name = req.body.name;
-                            playlist.description = req.body.description;
-                            playlist.songRank = '';
-                            playlist.playlistType = playlistType;
-                            playlist.temporary = false;
-                            playlist.user = result[0];
-
-                            new PlaylistBusiness().create(playlist, (error, result) => {
-                                if (error) {
-                                    logger.warn("PlaylistController.create : error", error);
-                                    res.status(400).send({"result": "Bad Request"});
-                                }
-                                else
-                                    res.status(200).send({"result": "Created", "data": result});
-                            });
-                        });
+                new PlaylistBusiness().create(playlist, (error, result) => {
+                    if (error) {
+                        logger.warn("PlaylistController.create : error", error);
+                        res.status(400).send({"result": "Bad Request"});
                     }
                     else
-                    {
-                        res.send("Failed authentication")
-                    }
-                }
+                        res.status(200).send({"result": "Created", "data": result});
+                });
             });
         }
         catch
@@ -299,148 +209,130 @@ class PlaylistController {
     }
 
     //Update a playlist
-    update(req: express.Request, res: express.Response): void {
+    update(req: any, res: express.Response): void {
         //TODO
         try {
 
-            LoginManager.decodeToken(req, res, (error, result) => {
-                if (error)
+            new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
+
+                var playlist = new Playlist();
+                var rank = '';
+
+                //Création des songs si elles n'existent pas
+                for(var i = 0; i < req.body.songs.length; i++)
                 {
-                    logger.warn("PlaylistController.update -> decodeToken : error", error);
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else {
-                    if (result != null && result.decoded)
-                    {
-                        var userToken: UserToken = result;
+                    rank += '"' + (i+1) + '": "' + req.body.songs[i].id + '", ';
 
-                        new UserBusiness().findByLogin(userToken.login, (error, result) => {
+                    var source = new SongSourceBusiness().getSource(req.body.songs[i].connector);
 
-                            var playlist = new Playlist();
-                            var rank = '';
+                    new SongBusiness().findByStreamSource(req.body.songs[i].stream, source,(error, result) => {
+                        //Song inexistante donc on la crée
+                        if (error)
+                        {
+                            var song = new Song();
 
-                            //Création des songs si elles n'existent pas
-                            for(var i = 0; i < req.body.songs.length; i++)
-                            {
-                                rank += '"' + (i+1) + '": "' + req.body.songs[i].id + '", ';
+                            song.title = req.body.songs[i].title;
+                            song.album = req.body.songs[i].album;
+                            song.artist = req.body.songs[i].artist;
+                            song.duration = req.body.songs[i].duration;
+                            song.stream = req.body.songs[i].stream;
 
-                                var source = new SongSourceBusiness().getSource(req.body.songs[i].connector);
-
-                                new SongBusiness().findByStreamSource(req.body.songs[i].stream, source,(error, result) => {
-                                    //Song inexistante donc on la crée
-                                    if (error)
-                                    {
-                                        var song = new Song();
-
-                                        song.title = req.body.songs[i].title;
-                                        song.album = req.body.songs[i].album;
-                                        song.artist = req.body.songs[i].artist;
-                                        song.duration = req.body.songs[i].duration;
-                                        song.stream = req.body.songs[i].stream;
-
-                                        new SongSourceBusiness().findById(req.body.songs[i].id,(error, result) => {
-                                            if (error)
-                                            {
-                                                logger.warn("PlaylistController.update -> findById songSource : error", error);
-                                            }
-                                            else
-                                            {
-                                                song.songSource = result;
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-
-                            //Update playlist
-
-                            var playlistType = new PlaylistType();
-                            playlistType.label = "Playlist";
-                            playlistType.id = 1;
-
-                            playlist.id = req.body.id;
-                            playlist.name = req.body.name;
-                            playlist.description = req.body.description;
-                            playlist.temporary = false;
-                            playlist.user = result[0];
-
-                            playlist.playlistType = playlistType;
-
-                            rank = rank.substring(0,rank.length-2);
-
-                            playlist.songRank = '{' + rank + '}';
-
-                            new PlaylistBusiness().update(playlist,(error, result) => {
-
-                                if(error)
+                            new SongSourceBusiness().findById(req.body.songs[i].id,(error, result) => {
+                                if (error)
                                 {
-                                    logger.warn("PlaylistController.update -> update playlist : error", error);
-                                    res.status(400).send({"result": "Bad Request"});
+                                    logger.warn("PlaylistController.update -> findById songSource : error", error);
                                 }
                                 else
                                 {
-                                    playlist = result;
+                                    song.songSource = result;
                                 }
                             });
+                        }
+                    });
+                }
 
-                            // //Suppression de tous les playlistSongs
-                            // new PlaylistSongBusiness().findByPlaylistId(playlist.id, (error, result) => {
-                            //
-                            //     for (var i = 0; i < result.length; i++)
-                            //     {
-                            //         new PlaylistSongBusiness().delete(result[i], (error, result) => {
-                            //             if(error) {
-                            //                 logger.warn("PlaylistController.update -> delete playlistSong : error", error);
-                            //             }
-                            //         });
-                            //     }
-                            // });
+                //Update playlist
 
-                            //Création playlistSongs pour les liaisons
+                var playlistType = new PlaylistType();
+                playlistType.label = "Playlist";
+                playlistType.id = 1;
 
-                            for(var i = 0; i < req.body.songs.length; i++){
+                playlist.id = req.body.id;
+                playlist.name = req.body.name;
+                playlist.description = req.body.description;
+                playlist.temporary = false;
+                playlist.user = result[0];
 
-                                var playlistSong = new PlaylistSong();
-                                playlistSong.addDate = new Date();
-                                playlistSong.playcount = 0;
-                                playlistSong.weight = 0;
-                                playlistSong.totalweight = 0;
-                                playlistSong.pending = false;
-                                playlistSong.playlist = playlist;
+                playlist.playlistType = playlistType;
 
-                                var source = new SongSourceBusiness().getSource(req.body.songs[i].connector);
+                rank = rank.substring(0,rank.length-2);
 
-                                new SongBusiness().findByStreamSource(req.body.songs[i].stream, source,(error, result) => {
-                                    if (error)
-                                    {
-                                        logger.warn("PlaylistController.update -> findByStreamSource playlistSong : error", error);
-                                    }
-                                    else
-                                    {
-                                        playlistSong.song = result;
+                playlist.songRank = '{' + rank + '}';
 
-                                        new PlaylistSongBusiness().create(playlistSong,(error, result) => {
-                                            if (error) {
-                                                logger.warn("PlaylistController.update : playlistSong creation error", error);
-                                            }
-                                            else
-                                            {
-                                                console.log(result);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+                new PlaylistBusiness().update(playlist,(error, result) => {
 
-                        res.status(200).send({"result": "Updated"});
+                    if(error)
+                    {
+                        logger.warn("PlaylistController.update -> update playlist : error", error);
+                        res.status(400).send({"result": "Bad Request"});
                     }
                     else
                     {
-                        res.send("Failed authentication")
+                        playlist = result;
                     }
+                });
+
+                // //Suppression de tous les playlistSongs
+                // new PlaylistSongBusiness().findByPlaylistId(playlist.id, (error, result) => {
+                //
+                //     for (var i = 0; i < result.length; i++)
+                //     {
+                //         new PlaylistSongBusiness().delete(result[i], (error, result) => {
+                //             if(error) {
+                //                 logger.warn("PlaylistController.update -> delete playlistSong : error", error);
+                //             }
+                //         });
+                //     }
+                // });
+
+                //Création playlistSongs pour les liaisons
+
+                for(var i = 0; i < req.body.songs.length; i++){
+
+                    var playlistSong = new PlaylistSong();
+                    playlistSong.addDate = new Date();
+                    playlistSong.playcount = 0;
+                    playlistSong.weight = 0;
+                    playlistSong.totalweight = 0;
+                    playlistSong.pending = false;
+                    playlistSong.playlist = playlist;
+
+                    var source = new SongSourceBusiness().getSource(req.body.songs[i].connector);
+
+                    new SongBusiness().findByStreamSource(req.body.songs[i].stream, source,(error, result) => {
+                        if (error)
+                        {
+                            logger.warn("PlaylistController.update -> findByStreamSource playlistSong : error", error);
+                        }
+                        else
+                        {
+                            playlistSong.song = result;
+
+                            new PlaylistSongBusiness().create(playlistSong,(error, result) => {
+                                if (error) {
+                                    logger.warn("PlaylistController.update : playlistSong creation error", error);
+                                }
+                                else
+                                {
+                                    console.log(result);
+                                }
+                            });
+                        }
+                    });
                 }
             });
+
+            res.status(200).send({"result": "Updated"});
         }
         catch (e)  {
             logger.error("PlaylistController.update : error", e);
@@ -455,41 +347,24 @@ class PlaylistController {
         var playlistBusiness = new PlaylistBusiness();
 
         try {
-            LoginManager.decodeToken(req,res, (error, result) => {
+            playlistBusiness.findById(req.params._playlistId, (error, result) => {
                 if(error)
                 {
-                    logger.warn("PlaylistController.delete -> decodeToken : error", error);
+                    logger.warn("PlaylistController.delete -> findById : error", error);
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
                 {
-                    if (result != null && result.decoded) {
-
-                        playlistBusiness.findById(req.params._playlistId, (error, result) => {
-                            if(error)
-                            {
-                                logger.warn("PlaylistController.delete -> findById : error", error);
-                                res.status(400).send({"result": "Bad Request"});
-                            }
-                            else
-                            {
-                                playlistBusiness.delete(result, (error, result) => {
-                                    if (error) {
-                                        logger.warn("PlaylistController.delete : error", error);
-                                        res.status(400).send({"result": "Bad Request"});
-                                    }
-                                    else
-                                        res.status(200).send({"result": "Deleted", "data": result});
-                                });
-                            }
-                        })
-                    }
-                    else
-                    {
-                        res.send("Failed authentication")
-                    }
+                    playlistBusiness.delete(result, (error, result) => {
+                        if (error) {
+                            logger.warn("PlaylistController.delete : error", error);
+                            res.status(400).send({"result": "Bad Request"});
+                        }
+                        else
+                            res.status(200).send({"result": "Deleted", "data": result});
+                    });
                 }
-            });
+            })
         }
         catch (e)  {
             logger.error("PlaylistController.delete : error", e);

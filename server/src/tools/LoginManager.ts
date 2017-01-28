@@ -2,54 +2,63 @@
  * Created by Lakio on 24/01/2017.
  */
 
+import express = require('express');
+import unless = require('express-unless');
 import jwt = require('jsonwebtoken');
 import Constants = require("../config/constants/constants");
-import UserToken = require("./UserToken");
 
-class LoginManager {
 
-    constructor(){
+export class LoginManager 
+{
+
+    constructor() {
 
     }
 
-    static decodeToken (req, res, callback: (error, result) => any ) {
 
-        if(process.env.SECURE != 1){
-            callback(null, true);
-            return;
+    static decodeToken (req, res: express.Response, next: express.NextFunction) 
+    {
+        if (req.path == '/api/login')
+        {
+            next();
         }
+        else
+        {
+            if (!req.headers['authorization']) throw new Error('authorization should be set');
 
-        try{
-            // check header parameters for token
-            var token = req.headers.authorization.split(' ')[1];
+            try{
+                // check header parameters for token
+                var token = req.headers['authorization'].split(' ')[1];
 
-            if (token) {
-                // verifies secret and checks exp
-                jwt.verify(token, Constants.SECRET_TOKEN, function (err, decoded) {
+                if (token) {
+                    // verifies secret and checks exp
+                    jwt.verify(token, Constants.SECRET_TOKEN, function (err, decoded) {
 
-                    if (err) {
-                        callback(err, null);
-                    } else {
+                        if (err) {
+                            next(err);
+                        } else {
 
-                        var decoded = jwt.decode(token, {complete: true});
+                            var decoded = jwt.decode(token, {complete: true});
 
-                        var userToken = new UserToken();
-                        userToken.decoded = decoded;
-                        userToken.login = decoded.payload.username;
-                        userToken.password = decoded.payload.password;
+                            res.locals.userToken = {};
+                            res.locals.userToken.decoded = decoded;
+                            res.locals.userToken.login = decoded.payload.username;
+                            res.locals.userToken.password = decoded.payload.password;
+                            
 
-                        callback(null, userToken);
-                    }
-                });
+                            next();
+                        }
+                    });
+                }
+                else {
+                    next(new Error("Unauthorized access"));
+                }
             }
-            else {
-                callback(new Error("Unauthorized access"), null);
+            catch(e){
+                next(e);
             }
         }
-        catch(e){
-            callback(e, null);
-        }
-    };
+    }
 
     static getToken(req): any {
 
@@ -67,5 +76,3 @@ class LoginManager {
         }
     }
 }
-
-export = LoginManager;
