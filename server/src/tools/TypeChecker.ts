@@ -54,6 +54,16 @@ class TypeChecker {
         }
     }
 
+    public static isArray(a: any) : boolean {
+        try {
+            return Array.isArray(a);
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
+
 }
 
 export = TypeChecker;

@@ -18,6 +18,7 @@ import SongBusiness = require("../app/business/SongBusiness");
 import {Song} from "../app/model/postgres/Song";
 import SongSourceBusiness = require("../app/business/SongSourceBusiness");
 import PlaylistSongBusiness = require("../app/business/PlaylistSongBusiness");
+import TypeChecker = require("../tools/TypeChecker");
 
 
 class PlaylistController {
@@ -68,6 +69,12 @@ class PlaylistController {
     getPlaylist(req: express.Request, res: express.Response): void {
         try
         {
+            if (TypeChecker.isNumber(req.params._playlistId) == false)
+            {
+                logger.warn("getPlaylist : error", {"error": new Error("Invalid params. Found : " + typeof req.params)});
+                res.status(400).send({"result": "Bad Request"});
+            }
+
             let _id: number = req.params._playlistId;
 
             new PlaylistBusiness().findById(_id, (error, result) => {
@@ -132,6 +139,12 @@ class PlaylistController {
     getEditionView(req: express.Request, res: express.Response): void {
         try
         {
+            if (TypeChecker.isNumber(req.params._playlistId) == false)
+            {
+                logger.warn("getPlaylist : error", {"error": new Error("Invalid params. Found : " + typeof req.params)});
+                res.status(400).send({"result": "Bad Request"});
+            }
+
             let _id: number = req.params._playlistId;
 
             new PlaylistBusiness().findById(_id, (error, result) => {
@@ -166,6 +179,14 @@ class PlaylistController {
     create(req: express.Request, res: express.Response): void {
         try {
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
+
+                if (TypeChecker.isString(req.body.name) == false
+                    || TypeChecker.isString(req.body.description) == false
+                )
+                {
+                    logger.warn("getEventDetails : error", {"error": new Error("Invalid body. Found : " + typeof req.body)});
+                    res.status(400).send({"result": "Bad Request"});
+                }
 
                 var playlist = new Playlist();
                 var playlistType = new PlaylistType();
@@ -206,13 +227,22 @@ class PlaylistController {
         try {
 
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
-
                     if (error) {
                         logger.warn("PlaylistController.update -> findByLogin : error", error);
                         res.status(400).send({"result": "Bad Request"});
                     }
                     else
                     {
+                        if (TypeChecker.isString(req.body.name) == false
+                            || TypeChecker.isString(req.body.description) == false
+                            || TypeChecker.isNumber(req.body.id) == false
+                            || TypeChecker.isArray(req.body.songs == false)
+                        )
+                        {
+                            logger.warn("getEventDetails : error", {"error": new Error("Invalid body. Found : " + typeof req.body)});
+                            res.status(400).send({"result": "Bad Request"});
+                        }
+
                         let playlist = new Playlist();
                         let songsRank = [];
                         let songs = req.body.songs;
