@@ -283,7 +283,7 @@ class UserRepository extends BaseRepository<User> {
             .createQueryBuilder(User.getTableName())
             .where("\"" + User.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + User.getTableName() + "\".login = :login", {login: login})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -313,7 +313,7 @@ class UserRepository extends BaseRepository<User> {
             .leftJoinAndSelect("subscriptionPackageDetail.tax", "tax")
             .where("\"" + User.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + User.getTableName() + "\".login = :login", {login: login})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -397,7 +397,7 @@ class UserRepository extends BaseRepository<User> {
         QB
             .where("\"" + User.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + User.getTableName() + "\".login = :login", {login: login})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
