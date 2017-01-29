@@ -17,8 +17,8 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
     constructor () {
         super(Playlist);
         this.playlistRepository = new PlaylistRepository();
-        this.playlistSongRepository= new PlaylistSongRepository();
-        this.playlistTypeRepository= new PlaylistTypeRepository();
+        this.playlistSongRepository = new PlaylistSongRepository();
+        this.playlistTypeRepository = new PlaylistTypeRepository();
     }
 
     create (item: Playlist, callback: (error: any, result: any) => void) {
@@ -47,6 +47,10 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
 
     getPlaylistTypeById(id: number, callback : (error : any, result:any) => void) {
         this.playlistTypeRepository.findById(id,callback);
+    }
+
+    getPlaylistTypeByLabel(label: string, callback : (error : any, result:any) => void) {
+        this.playlistTypeRepository.findByLabel(label,callback);
     }
 
 }

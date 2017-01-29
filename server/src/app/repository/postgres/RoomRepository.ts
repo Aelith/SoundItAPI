@@ -586,6 +586,19 @@ class RoomRepository extends BaseRepository<Room> {
             });
     }
 
+    
+    setInactiveByRoomTemplateId(roomTemplateId: number,  callback: (error: any, result: any) => any) {
+        DataAccessPostgres.connect()
+            .getRepository(Room)
+            .query('UPDATE "Room" SET deleted=true WHERE "Room"."roomTemplate" = ' + roomTemplateId)
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
 }
 
 export = RoomRepository;

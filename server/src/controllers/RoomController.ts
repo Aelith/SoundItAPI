@@ -5,7 +5,19 @@
 import express = require("express");
 import IBaseController = require("./interfaces/BaseController");
 import logger = require("./../tools/Logger");
+import TypeChecker = require("./../tools/TypeChecker");
+import UserBusiness = require("../app/business/UserBusiness");
 import RoomBusiness = require("../app/business/RoomBusiness");
+import TagBusiness = require("../app/business/TagBusiness");
+import PlaylistBusiness = require("../app/business/PlaylistBusiness");
+import {User} from "../app/model/postgres/User"
+import {Room} from "../app/model/postgres/Room"
+import {Tag} from "../app/model/postgres/Tag"
+import {RoomTemplate} from "../app/model/postgres/RoomTemplate"
+import {UserGroup} from "../app/model/postgres/UserGroup"
+import {Playlist} from "../app/model/postgres/Playlist"
+import {PlaylistType} from "../app/model/postgres/PlaylistType"
+import {RoomPlaylist} from "../app/model/postgres/RoomPlaylist"
 
 
 class RoomController  {
@@ -94,68 +106,305 @@ class RoomController  {
         //TODO
     }
 
-    //Create room
-    create(req: express.Request, res: express.Response): void {
-        //TODO
-        try {
-            this.roomBusiness.create(JSON.parse(req.body), (error, result) => {
-                if (error) {
-                    logger.warn("create : error", {"error": error});
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else
-                    res.status(200).send({"result": "Created", "data": result});
-            });
-        }
-        catch(e) {
-            logger.warn("create : error", {"error": e});
-            res.status(400).send({"result": "Bad Request"});
-        }
-    }
+    
 
     //Create a song submission
     submitSong(req: express.Request, res: express.Response): void {
         //TODO
     }
 
-    //Update a room
-    update(req: express.Request, res: express.Response): void {
-        //TODO
-        try {
+    //Create a room
+    create(req: express.Request, res: express.Response): void {
+        
+        if (TypeChecker.isString(req.body.description) == false
+            || TypeChecker.isString(req.body.tags) == false 
+            || TypeChecker.isArray(req.body.playlists) == false 
+            )
+        {
+            logger.warn("RoomController -> create : error", {"error": new Error("Invalid body. Found : " + typeof req.body)});
+            res.status(400).send({"result": "Bad Request"});
+        }
+        else
+        {
+            let TB : TagBusiness = new TagBusiness();
+            let RB : RoomBusiness = new RoomBusiness();
+            let UB : UserBusiness = new UserBusiness();
+            let PB : PlaylistBusiness = new PlaylistBusiness();
 
-            this.roomBusiness.update(JSON.parse(req.body), (error, result) => {
-                if (error) {
-                    logger.warn("update : error", {"error": error});
+            // Event to save
+            let newRoom: Room = new Room();
+
+
+            // Get current user
+            UB.findCompleteByLogin(res.locals.userToken.login, (error, result) => {
+                if (error)
+                {
+                    logger.warn("RoomController -> create : error", {"error": error});
                     res.status(400).send({"result": "Bad Request"});
                 }
-                else
-                    res.status(200).send({"result": "Updated", "data": result});
-            });
-        }
-        catch (e)  {
-            logger.error("update : error", {"error": e});
-            res.status(400).send({"result": "Bad Request"});
+                else if (result == null || result == undefined || !(result instanceof User) || result.userType.id != 2)
+                {
+                    res.status(403).send({"result": "RoomController -> create : insufficient permissions"});
+                }
+                else 
+                {
 
+                    newRoom.description = req.body.description;
+                    newRoom.active = true;
+                    newRoom.state = newRoom.active;
+                    newRoom.label = result.roomTemplates[0].name + "_" + new Date().getTime();
+
+
+                    // Default prototype values
+                    newRoom.password = '';
+                    newRoom.usingValidation = true;
+
+                    let ug = new UserGroup();
+                    ug.id = 1;
+
+                    newRoom.userGroup = ug;
+                    // end of defaults values
+
+                    newRoom.roomTemplate = result.roomTemplates[0];
+                    newRoom.tags = [];
+                    RB.desactivateAllRoomByRoomTemplate(result.roomTemplates[0], (error, result) => {
+                        if(error)
+                        {
+                            logger.warn("RoomController -> create : error", {"error": error});
+                            res.status(400).send({"result": "Bad Request"});
+                        }
+                        else
+                        {
+
+                            // Room Create
+                            RB.create(newRoom, (error, result) => {
+                                if (error)
+                                {
+                                    logger.warn("RoomController -> create : error", {"error": error});
+                                    res.status(400).send({"result": "Bad Request"});
+                                }
+                                else
+                                {
+                                    // Return created room's id
+                                    res.status(200).send({"id": '"' + result.id + '"'})
+
+                                    newRoom = result;
+
+                                    // Init counter to know when all tags are set in newRoom
+                                    let remainingTags = req.body.tags.split(' ').length;
+                                    
+                                    // for each tags to save
+                                    req.body.tags.split(' ').forEach((t, i, tags) => {
+                                        
+
+                                        if (t != '' && t != ' ') {
+                                            // Trying to find existing tag
+                                            TB.findByLabel(t, (error, result) => {
+                                                if (error)
+                                                {   
+                                                    // Decrease counter
+                                                    remainingTags--;
+                                                    logger.warn("RoomController -> create : error", {"error": error});
+                                                }
+                                                else if (result == null || result == undefined || !(result instanceof Tag))
+                                                {
+                                                    // Tag doesn't exist, we create it
+                                                    let tag = new Tag();
+                                                    tag.label = t.toLowerCase();
+
+                                                    // Tag creation
+                                                    TB.create(tag, (error, result) => {
+                                                        if (error)
+                                                        {
+                                                            logger.warn("RoomController -> create : error", {"error": error});
+                                                        }
+                                                        else
+                                                        {
+                                                            // Adding tag to room
+                                                            newRoom.tags.push(result);
+
+                                                            // Decrease counter
+                                                            remainingTags--;
+                                                            // If it's the last one, do the update
+                                                            if (remainingTags <= 0)
+                                                            {
+                                                                // update room
+                                                                RB.update(newRoom, (error, result) => {
+                                                                    if (error)
+                                                                    {
+                                                                        logger.warn("RoomController -> create : error", {"error": error});
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        
+                                                                    }
+                                                                });
+                                                            }
+                                                            
+                                                        }
+                                                    });
+                                                }
+                                                else
+                                                {
+                                                    // Tag exists
+
+                                                    // Adding tag to room
+                                                    newRoom.tags.push(result);
+
+
+                                                    // Decrease counter
+                                                    remainingTags--;
+                                                    if (remainingTags <= 0)
+                                                    {
+                                                        // update room
+                                                        RB.update(newRoom, (error, result) => {
+                                                            if (error)
+                                                            {
+                                                                logger.warn("RoomController -> create : error", {"error": error});
+                                                            }
+                                                            else
+                                                            {
+                                                                
+                                                            }
+                                                        });
+                                                    
+                                                    }
+                                                }
+
+                                            });
+                                        }
+                                        else
+                                        {
+                                            // Decrease counter
+                                            remainingTags--;
+                                        }
+                                    });
+
+
+                                    
+                                    // Playlist linking
+                                    req.body.playlists.forEach((p, i, playlists) => {
+                                        if(p.id == null || p.id == undefined || p.id < 0
+                                        || p.type == null || p.type == undefined || p.typeid < 0)
+                                        {
+                                            logger.warn("RoomController -> create : error", {"error": new Error("Invalid body.playlists. Found : " + typeof req.body.playlists)});
+
+                                        }
+                                        else
+                                        {
+                                            let newRoomPlaylist = new RoomPlaylist();
+
+                                            // Newly created room is the owner of the relation
+                                            newRoomPlaylist.room = newRoom;
+
+                                            // Find Playlist by Id
+                                            PB.findById(p.id, (error, result) => {
+                                                if(error)
+                                                {
+                                                    logger.warn("RoomController -> create : error", {"error": error});
+                                                }
+                                                else if (result == null || result == undefined || !(result instanceof Playlist))
+                                                {
+                                                    // Playlist doesn't exist, this case should never happen
+                                                    logger.warn("RoomController -> create : error", {"error": new Error("innexistent playlist, should never happen")});
+                                                }
+                                                else
+                                                {
+                                                    // found playlist added to relation
+                                                    newRoomPlaylist.playlist = result;
+
+                                                    PB.getPlaylistTypeByLabel(p.type, (error, result) => {
+                                                        if(error)
+                                                        {
+                                                            logger.warn("RoomController -> create : error", {"error": error});
+                                                        }
+                                                        else if (result == null || result == undefined || !(result instanceof PlaylistType))
+                                                        {
+                                                            // PlaylistType doesn't exist, this case should never happen
+                                                            logger.warn("RoomController -> create : error", {"error": new Error("innexistent playlist type, should never happen")});
+                                                        }
+                                                        else
+                                                        {
+                                                            // found playlistType added to relation
+                                                            newRoomPlaylist.playlistType = result;
+
+                                                            // Now object newRoomPlaylist is complete, save it
+                                                            RB.addPlaylistToRoom(newRoomPlaylist, (error, result) => {
+                                                                if (error)
+                                                                {
+                                                                    logger.warn("RoomController -> create : error", {"error": error});
+                                                                }
+                                                                else 
+                                                                {
+                                                                    // OK
+                                                                }
+                                                            })
+                                                        }
+                                                    })
+                                                }
+                                            });
+                                        }
+                                    });
+
+
+                                }
+                            });
+                        }
+                    });
+                   
+
+                }
+
+            });
+            
         }
     }
 
-    //Delete a playlist
-    delete(req: express.Request, res: express.Response): void {
-        try {
+    //Update a room
+    update(req: express.Request, res: express.Response): void {
+        this.create(req, res);
+    }
 
-            this.roomBusiness.delete(JSON.parse(req.body), (error, result) => {
-                if (error) {
-                    logger.warn("delete : error", {"error": error});
+    //Delete a room
+    delete(req: express.Request, res: express.Response): void {
+
+        if (TypeChecker.isNumber(req.params._roomId) == false)
+        {
+            logger.warn("RoomController -> delete : error", {"error": new Error("Invalid param, expected a number. Found : " + typeof req.params._roomId)});
+            res.status(400).send({"result": "Bad Request"});
+        }
+        else
+        {
+            let RB: RoomBusiness = new RoomBusiness();
+            let roomId: number = req.params._roomId;
+
+            // Retrieve room's details by his id
+            RB.findById(roomId, (error: any, result: any) => {
+
+                if (error)
+                {
+                    logger.warn("RoomController -> delete : error", {"error": error});
+                    res.status(400).send({"result": "Bad Request"});
+                }
+                else if (result == null || result == undefined || !(result instanceof Room))
+                {
                     res.status(400).send({"result": "Bad Request"});
                 }
                 else
-                    res.status(200).send({"result": "Deleted", "data": result});
+                {
+                    RB.delete(result, (error, result) => {
+                        if (error)
+                        {
+                            logger.warn("RoomController -> delete : error", {"error": error});
+                            res.status(400).send({"result": "Bad Request"});
+                        }
+                        else
+                        {
+                            res.status(200).send({"result": "Deleted"})
+                        }
+                    });     
+                }
             });
-        }
-        catch (e)  {
-            logger.error("delete : error", {"error": e});
-            res.status(400).send({"result": "Bad Request"});
-
         }
     }
 

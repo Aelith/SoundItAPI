@@ -542,7 +542,7 @@ class EventController {
         }
         else
         {
-            let EB: EventBusiness = new EventBusiness;
+            let EB: EventBusiness = new EventBusiness();
             let eventId: number = req.params._eventId;
 
             // Retrieve event's details by his id

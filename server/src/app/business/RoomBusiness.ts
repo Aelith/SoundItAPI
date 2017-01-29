@@ -3,12 +3,15 @@
  */
 
 import PlaylistRepository = require("../repository/postgres/RoomRepository");
+import RoomPlaylistRepository = require("../repository/postgres/RoomPlaylistRepository");
 import {Room} from "../model/postgres/Room";
+import {Playlist} from "../model/postgres/Playlist";
+import {PlaylistType} from "../model/postgres/PlaylistType";
+import {RoomPlaylist} from "../model/postgres/RoomPlaylist";
+import {RoomTemplate} from "../model/postgres/RoomTemplate";
 import BaseBusiness = require("./interfaces/BaseBusiness");
 import RoomRepository = require("../repository/postgres/RoomRepository");
 import RoomTemplateRepository = require("../repository/postgres/RoomTemplateRepository");
-import RoomPlaylistRepository = require("../repository/postgres/RoomPlaylistRepository");
-import {RoomPlaylist} from "../model/postgres/RoomPlaylist";
 
 class RoomBusiness extends BaseBusiness<Room> {
 
@@ -17,7 +20,7 @@ class RoomBusiness extends BaseBusiness<Room> {
 
     constructor () {
         super(Room);
-        this.roomRepository = new PlaylistRepository();
+        this.roomRepository = new RoomRepository();
         this.roomPlaylistRepository = new RoomPlaylistRepository();
     }
 
@@ -42,10 +45,28 @@ class RoomBusiness extends BaseBusiness<Room> {
     }
 
     delete(item: Room, callback: (error: any, result: any) => void){
-        super.delete(item,callback);
+        item.deleted = true;
+        this.roomRepository.update(item, callback);
+    }
+
+    deleteById(id: number, callback: (error: any, result: any) => void){
+        
+        this.roomRepository.findById(id, (err, res) => {
+            if(err) {
+                callback(err, res);
+            }
+            else {
+                res.deleted = true;
+                this.roomRepository.update(res, callback);
+            }
+        });
     }
 
     findById (_id: number, callback: (error: any, result: Room) => void) {
+        this.roomRepository.findById(_id, callback);
+    }
+
+    findHydratedById (_id: number, callback: (error: any, result: Room) => void) {
         this.roomRepository.findCustomHydratedById(_id,
                 [RoomRepository.eProperty.RoomPlaylistPlaylistType,
                 RoomRepository.eProperty.RoomPlaylistPlaylist,
@@ -59,14 +80,19 @@ class RoomBusiness extends BaseBusiness<Room> {
         //TODO
     }
 
-    findByUserId(_id: number, callback: (error: any, result: Room) => void) {
-        //this.roomRepository.findByUserId(_id, callback);
-    }
 
     getRoomPlaylistByRoomId(roomId: number, callback: (error: any, result: RoomPlaylist[]) => void) {
         this.roomPlaylistRepository.findByRoomId(roomId,callback);
     }
 
+    addPlaylistToRoom(roomPlaylist: RoomPlaylist, callback: (error: any, result: Room) => void) {
+
+        new RoomPlaylistRepository().create(roomPlaylist, callback);
+    }
+
+    desactivateAllRoomByRoomTemplate(roomTemplate: RoomTemplate, callback: (error: any, result: any) => void) {
+        this.roomRepository.setInactiveByRoomTemplateId(roomTemplate.id, callback);
+    }
 }
 
 Object.seal(RoomBusiness);

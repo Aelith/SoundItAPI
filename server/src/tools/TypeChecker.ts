@@ -64,6 +64,17 @@ class TypeChecker {
         }
     }
 
+    public static isBoolean(a: any) : boolean {
+        try {
+            return (a === true || a === false || a === 0 || a === 1);
+            
+        }
+        catch (e)
+        {
+            return false;
+        }
+    }
+
 }
 
 export = TypeChecker;

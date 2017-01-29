@@ -20,8 +20,8 @@ class TestController
     retrieve(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : EventRepository = new EventRepository();
-            BR.retrieveToCome((error, result) => {
+            let BR : UserRepository = new UserRepository();
+            BR.retrieve((error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -43,8 +43,8 @@ class TestController
     retrieveHydrated(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : EventRepository = new EventRepository();
-            BR.retrieveToComeHydrated((error, result) => {
+            let BR : UserRepository = new UserRepository();
+            BR.retrieveHydrated((error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
@@ -166,7 +166,7 @@ class TestController
     findById2(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : RoomRepository = new RoomRepository();
+            let BR : EventRepository = new EventRepository();
             var id = req.params._id;
             BR.findById(id, (error, result) => {
                 if(error)
@@ -190,9 +190,9 @@ class TestController
     findHydratedById2(req: express.Request, res: express.Response): void
     {
         try {
-            let BR : RoomRepository = new RoomRepository();
+            let BR : EventRepository = new EventRepository();
             var id = req.params._id;
-            BR.findCustomHydratedById(id, [RoomRepository.eProperty.RoomPlaylistPlaylistType, RoomRepository.eProperty.UserGroupRoomRight, RoomRepository.eProperty.RoomTemplateTag],(error, result) => {
+            BR.findCustomHydratedById(id, [EventRepository.eProperty.Tags],(error, result) => {
                 if(error)
                 {
                     logger.error("retrieve error", {"error": error});
