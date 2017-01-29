@@ -305,17 +305,6 @@ class PlaylistRepository extends BaseRepository<Playlist> {
      */
     findUnusedByUserId (idUser: number, callback: (error: any, result: any) => any) {
 
-        // let sql = DataAccessPostgres.connect()
-        //     .getRepository(User)
-        //     .createQueryBuilder(User.getTableName())
-        //     .leftJoin("\"" + User.getTableName() + "\".roomTemplates", "roomTemplates")
-        //     .leftJoin("roomTemplates.rooms", "rooms")
-        //     .leftJoin("rooms.roomPlaylists", "roomPlaylists")
-        //     .where("rooms.deleted = :deleted", {deleted: false})
-        //     .andWhere("rooms.active = :active", {active: true})
-        //     .andWhere("\"" + User.getTableName() + "\".id = :idU", {idU: idUser})
-        //     .getSql();
-
         let sql =   'SELECT rp.playlist ' +
                     'FROM "User" u ' +
                     'LEFT JOIN "RoomTemplate" rt ON u.id = rt.user ' +
@@ -324,8 +313,6 @@ class PlaylistRepository extends BaseRepository<Playlist> {
                     'WHERE r.active = true ' +
                     'AND u.id = ' + idUser + ' ' +
                     'AND r.deleted = false';
-
-        console.log(sql);
 
         DataAccessPostgres.connect()
             .getRepository(Playlist)
