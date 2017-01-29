@@ -57,7 +57,7 @@ class SongController  {
 
         RB.findHydratedById(roomId,(error, result) => {
             if (error) {
-                logger.warn("SongController.getNextSong -> room findById : error", error);
+                logger.warn("SongController.getNextSong -> room findHydratedById : error", error);
                 res.status(400).send({"result": "Bad Request"});
             }
             else {
@@ -68,8 +68,8 @@ class SongController  {
                         logger.warn("SongController.getNextSong -> getPlaylistTypeById : error", error);
                         res.status(400).send({"result": "Bad Request"});
                     }
-                    else {
-
+                    else
+                    {
                         for (let i = 0; i < room.roomPlaylists.length; i++) {
                             if (room.roomPlaylists[i].playlist.playlistType.id == result.id) {
                                 playlist = room.roomPlaylists[i].playlist;

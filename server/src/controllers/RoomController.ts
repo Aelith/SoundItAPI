@@ -145,12 +145,12 @@ class RoomController  {
 
                                         for(let i = 0; i < roomTemplate.tags.length; i++)
                                         {
-                                            tagResponse += roomTemplate.tags[i].label + ',';
+                                            tagResponse += roomTemplate.tags[i].label + ' ';
                                         }
 
                                         for(let i = 0; i < room.tags.length; i++)
                                         {
-                                            tagResponse += room.tags[i].label + ',';
+                                            tagResponse += room.tags[i].label + ' ';
                                         }
 
                                         for(let i = 0; i < room.roomPlaylists.length; i++)
@@ -180,6 +180,8 @@ class RoomController  {
                                             let user = {};
                                             user["id"] = room.roomUsers[i].user.id;
                                             user["name"] = room.roomUsers[i].user.firstName + ' ' + room.roomUsers[i].user.lastName;
+                                            user["firstVisit"] = room.roomUsers[i].firstvisit;
+                                            user["lastVisit"] = room.roomUsers[i].lastvisit;
 
                                             usersResponse.push(user);
                                         }
@@ -189,7 +191,7 @@ class RoomController  {
                                         response["id"] = room.id;
                                         response["name"] = room.label;
                                         response["description"] = roomTemplate.description + " - " + room.description;
-                                        response["tag"] = tagResponse;
+                                        response["tags"] = tagResponse;
                                         response["playlists"] = playlistsResponse;
                                         response["events"] = eventsResponse;
                                         response["users"] = usersResponse;
