@@ -229,7 +229,6 @@ class PlaylistController {
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
                     if (error) {
                         logger.warn("PlaylistController.update -> findByLogin : error", error);
-                        res.status(400).send({"result": "Bad Request"});
                     }
                     else
                     {
@@ -240,7 +239,6 @@ class PlaylistController {
                         )
                         {
                             logger.warn("getEventDetails : error", {"error": new Error("Invalid body. Found : " + typeof req.body)});
-                            res.status(400).send({"result": "Bad Request"});
                         }
 
                         let playlist = new Playlist();
@@ -267,7 +265,6 @@ class PlaylistController {
                                 if (error)
                                 {
                                     logger.warn("PlaylistController.update -> findById songSource : error", error);
-                                    res.status(400).send({"result": "Bad Request"});
                                 }
                                 //LA SONG N'EXISTE PAS
                                 else if (result == undefined)
@@ -304,7 +301,6 @@ class PlaylistController {
                                                         if (error)
                                                         {
                                                             logger.warn("PlaylistController.update : playlistSong creation error", error);
-                                                            res.status(400).send({"result": "Bad Request"});
                                                         }
                                                         //LA PLAYLISTSONG N'EXISTE PAS
                                                         else if (result == undefined)
@@ -323,7 +319,6 @@ class PlaylistController {
                                                                 if (error)
                                                                 {
                                                                     logger.warn("PlaylistController.update : playlistSong creation error", error);
-                                                                    res.status(400).send({"result": "Bad Request"});
                                                                 }
                                                                 else
                                                                 {
@@ -332,7 +327,6 @@ class PlaylistController {
                                                                         if (error)
                                                                         {
                                                                             logger.warn("PlaylistController.update -> update playlist : error", error);
-                                                                            res.status(400).send({"result": "Bad Request"});
                                                                         }
                                                                         else
                                                                         {
@@ -349,7 +343,6 @@ class PlaylistController {
                                                                 if (error)
                                                                 {
                                                                     logger.warn("PlaylistController.update -> update playlist : error", error);
-                                                                    res.status(400).send({"result": "Bad Request"});
                                                                 }
                                                                 else
                                                                 {
@@ -375,7 +368,6 @@ class PlaylistController {
                                         if (error)
                                         {
                                             logger.warn("PlaylistController.update : playlistSong creation error", error);
-                                            res.status(400).send({"result": "Bad Request"});
                                         }
                                         //LA PLAYLISTSONG N'EXISTE PAS
                                         else if (result == undefined)
@@ -394,7 +386,6 @@ class PlaylistController {
                                                 if (error)
                                                 {
                                                     logger.warn("PlaylistController.update : playlistSong creation error", error);
-                                                    res.status(400).send({"result": "Bad Request"});
                                                 }
                                                 else
                                                 {
@@ -403,7 +394,6 @@ class PlaylistController {
                                                         if (error)
                                                         {
                                                             logger.warn("PlaylistController.update -> update playlist : error", error);
-                                                            res.status(400).send({"result": "Bad Request"});
                                                         }
                                                         else
                                                         {
@@ -420,7 +410,6 @@ class PlaylistController {
                                                 if (error)
                                                 {
                                                     logger.warn("PlaylistController.update -> update playlist : error", error);
-                                                    res.status(400).send({"result": "Bad Request"});
                                                 }
                                                 else
                                                 {
