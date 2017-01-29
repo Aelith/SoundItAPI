@@ -94,6 +94,7 @@ class PlaylistController {
 
                     for(var i = 0; i < result.playlistSongs.length; i++)
                     {
+
                         var song = {};
                         song["id"] = result.playlistSongs[i].song.id;
                         song["title"] = result.playlistSongs[i].song.title;
@@ -516,7 +517,7 @@ class PlaylistController {
             songRank += songs[i].id + ',';
         }
 
-        return songRank.substring(0,songRank.length - 2);
+        return songRank.substring(0,songRank.length - 1);
     }
 
 }

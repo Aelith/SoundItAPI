@@ -7,7 +7,7 @@ import express = require("express");
 import SongController = require("./../../controllers/SongController");
 
 var router = express.Router();
-class UserRoutes {
+class SongRoutes {
     private songController: SongController;
 
     constructor () {
@@ -17,20 +17,21 @@ class UserRoutes {
         var controller = this.songController;
 
         //Get song preview
-        router.get("/song/{songId}/preview", controller.getPreview);
+        router.get("/song/:songId/preview", controller.getPreview);
 
         //Search for a song
-        router.get("/song/search/{researchText}", controller.search);
+        router.get("/song/search/:researchText", controller.search);
 
         //Show song DETAILS
-        router.get("/song/{songId}", controller.getDetails);
+        router.get("/song/:songId", controller.getDetails);
+
         //Get room next song
-        router.get("/nextSong/{roomId}", controller.getNextSong);
+        router.get("/nextSong/:roomId/:currentSongId", controller.getNextSong);
 
         return router;
     }
 }
 
-Object.seal(UserRoutes);
-export = UserRoutes;
+Object.seal(SongRoutes);
+export = SongRoutes;
 

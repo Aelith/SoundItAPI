@@ -13,11 +13,14 @@ import PlaylistBusiness = require("../app/business/PlaylistBusiness");
 import {User} from "../app/model/postgres/User"
 import {Room} from "../app/model/postgres/Room"
 import {Tag} from "../app/model/postgres/Tag"
-import {RoomTemplate} from "../app/model/postgres/RoomTemplate"
+import {Event} from "../app/model/postgres/Event"
 import {UserGroup} from "../app/model/postgres/UserGroup"
 import {Playlist} from "../app/model/postgres/Playlist"
 import {PlaylistType} from "../app/model/postgres/PlaylistType"
 import {RoomPlaylist} from "../app/model/postgres/RoomPlaylist"
+import EventBusiness = require("../app/business/EventBusiness");
+import RoomTemplateBusiness = require("../app/business/RoomTemplateBusiness");
+import {RoomTemplate} from "../app/model/postgres/RoomTemplate";
 
 
 class RoomController  {
@@ -46,22 +49,34 @@ class RoomController  {
     //Show rooms
     getRooms(req: express.Request, res: express.Response): void {
         //TODO
-        try
-        {
-            this.roomBusiness.getRoomsWithDetails((error, result) => {
-                if(error)
-                {
-                    logger.warn("getRooms : error", {"error": error});
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else
-                {
-                    res.json(JSON.stringify(result));
-                }
+        try {
+
+            new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
+
+                new RoomBusiness().findByUserId(result[0].id, (error, result) => {
+                    if (error) {
+                        logger.warn("RoomController.getRooms -> findById : error", error);
+                        res.status(400).send({"result": "Bad Request"});
+                    }
+                    else {
+
+                        var rooms = [];
+
+                        // for (var i = 0; i < result.length; i++) {
+                        //     var object = {};
+                        //     object["id"] = result[i].id;
+                        //     object["name"] = result[i].name;
+                        //     object["description"] = result[i].description;
+                        //     rooms.push(object);
+                        // }
+
+                        res.json(rooms);
+                    }
+                });
             });
         }
         catch (e)  {
-            logger.error("getRooms : error", {"error": e});
+            logger.error("RoomController.getRooms : error", e);
             res.status(400).send({"result": "Bad Request"});
         }
     }
@@ -73,31 +88,134 @@ class RoomController  {
 
     //Show room detail
     getRoomDetails(req: express.Request, res: express.Response): void {
-        //TODO
         try
         {
-            var _id: string = req.params._roomId;
+            let user: User;
+            let room: Room = null;
+            let events: Event[];
+            let roomTemplate: RoomTemplate;
+            let playlistsResponse = [];
+            let eventsResponse = [];
+            let usersResponse = [];
+            let tagResponse = "";
 
-            this.roomBusiness.findById(_id, (error, result) => {
-                if(error)
-                {
-                    logger.warn("getRoomDetails : error", {"error": error});
-                    res.status(400).send({"result": "Bad Request"});
-                }
-                else
-                {
-                    res.json(JSON.stringify(result));
-                }
-            });
+            let response = {};
+
+                new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
+                    if (error) {
+                        logger.warn("RoomController.getRoomDetails -> findByLogin : error", error);
+                    }
+                    else
+                    {
+                        user = result;
+
+                        new RoomBusiness().findByUserId(user.id, (error, result) => {
+                            if (error) {
+                                logger.warn("RoomController.getRoomDetails -> room findByUserId : error", error);
+                            }
+                            else
+                            {
+                                for(let i = 0; i < result.length; i++)
+                                {
+                                    if(result[i].active)
+                                    {
+                                        room = result[i];
+                                    }
+                                }
+
+                                if(room == null)
+                                {
+                                    logger.warn("RoomController.getRoomDetails -> Aucune room n'est active pour cet utilisateur : user", user);
+                                    res.status(400).send({"result": "Bad Request"});
+                                }
+
+                                new RoomTemplateBusiness().findByUserId(user.id, (error, result) => {
+                                    if (error)
+                                    {
+                                        logger.warn("RoomController.getRoomDetails -> roomTemplate findByUserId : error", error);
+                                    }
+                                    else
+                                    {
+                                        roomTemplate = result;
+                                        events = result.events;
+
+                                        for(let i = 0; i < roomTemplate.tags.length; i++)
+                                        {
+                                            tagResponse += roomTemplate.tags[i].label + ',';
+                                        }
+
+                                        for(let i = 0; i < room.tags.length; i++)
+                                        {
+                                            tagResponse += room.tags[i].label + ',';
+                                        }
+
+                                        for(let i = 0; i < room.roomPlaylists.length; i++)
+                                        {
+                                            let playlist = {};
+                                            playlist["id"] = room.roomPlaylists[i].playlist.id;
+                                            playlist["name"] = room.roomPlaylists[i].playlist.name;
+                                            playlist["description"] = room.roomPlaylists[i].playlist.description;
+                                            playlist["type"] = room.roomPlaylists[i].playlist.playlistType.label;
+
+                                            playlistsResponse.push(playlist);
+                                        }
+
+                                        for(let i = 0; i < events.length; i++)
+                                        {
+                                            let event = {};
+                                            event["id"] = events[i].id;
+                                            event["name"] = events[i].name;
+                                            event["description"] = events[i].description;
+                                            event["date"] = events[i].eventDate;
+
+                                            for(let j = 0; j < events[i].tags.length; j++)
+                                            {
+                                                tagResponse += events[i].tags[j].label + ',';
+                                            }
+
+                                            eventsResponse.push(event);
+                                        }
+
+                                        for(let i = 0; i < room.roomUsers.length; i++)
+                                        {
+                                            let user = {};
+                                            user["id"] = room.roomUsers[i].user.id;
+                                            user["name"] = room.roomUsers[i].user.firstName + ' ' + room.roomUsers[i].user.lastName;
+
+                                            usersResponse.push(user);
+                                        }
+
+                                        tagResponse = tagResponse.substring(0, tagResponse.length-1);
+
+                                        response["id"] = room.id;
+                                        response["name"] = room.label;
+                                        response["description"] = roomTemplate.description + " - " + room.description;
+                                        response["tag"] = tagResponse;
+                                        response["playlists"] = playlistsResponse;
+                                        response["events"] = eventsResponse;
+                                        response["users"] = usersResponse;
+
+                                        res.status(200).send(response);
+                                    }
+                                });
+
+                            }
+                        });
+                    }
+                });
         }
         catch (e)  {
-            logger.error("getRoomDetails : error", {"error": e});
+            logger.error("RoomController.getRoomDetails : error", {"error": e});
             res.status(400).send({"result": "Bad Request"});
         }
     }
 
     //Show room playlist
     getRoomPlaylist(req: express.Request, res: express.Response): void {
+        //TODO
+    }
+
+    getTemplateEditionView(req: express.Request, res: express.Response): void {
         //TODO
     }
 
@@ -363,6 +481,10 @@ class RoomController  {
     //Update a room
     update(req: express.Request, res: express.Response): void {
         this.create(req, res);
+    }
+
+    updateTemplate(req: express.Request, res: express.Response): void {
+        //TODO
     }
 
     //Delete a room
