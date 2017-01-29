@@ -513,7 +513,7 @@ class PlaylistController {
 
         for(let i = 0; i < songs.length; i++)
         {
-            songRank += songs[i].id + ', ';
+            songRank += songs[i].id + ',';
         }
 
         return songRank.substring(0,songRank.length - 2);

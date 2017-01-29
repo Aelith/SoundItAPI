@@ -6,14 +6,19 @@ import PlaylistRepository = require("../repository/postgres/RoomRepository");
 import {Room} from "../model/postgres/Room";
 import BaseBusiness = require("./interfaces/BaseBusiness");
 import RoomRepository = require("../repository/postgres/RoomRepository");
+import RoomTemplateRepository = require("../repository/postgres/RoomTemplateRepository");
+import RoomPlaylistRepository = require("../repository/postgres/RoomPlaylistRepository");
+import {RoomPlaylist} from "../model/postgres/RoomPlaylist";
 
 class RoomBusiness extends BaseBusiness<Room> {
 
     private roomRepository: RoomRepository;
+    private roomPlaylistRepository: RoomPlaylistRepository;
 
     constructor () {
         super(Room);
         this.roomRepository = new PlaylistRepository();
+        this.roomPlaylistRepository = new RoomPlaylistRepository();
     }
 
     create (item: Room, callback: (error: any, result: any) => void) {
@@ -41,11 +46,25 @@ class RoomBusiness extends BaseBusiness<Room> {
     }
 
     findById (_id: number, callback: (error: any, result: Room) => void) {
-        this.roomRepository.findById(_id, callback);
+        this.roomRepository.findCustomHydratedById(_id,
+                [RoomRepository.eProperty.RoomPlaylistPlaylistType,
+                RoomRepository.eProperty.RoomPlaylistPlaylist,
+                RoomRepository.eProperty.RoomTemplateTag,
+                RoomRepository.eProperty.RoomUserUser,
+                RoomRepository.eProperty.Tags],
+            callback);
     }
 
     getRoomsWithDetails(callback: (error: any, result: any) => void){
         //TODO
+    }
+
+    findByUserId(_id: number, callback: (error: any, result: Room) => void) {
+        //this.roomRepository.findByUserId(_id, callback);
+    }
+
+    getRoomPlaylistByRoomId(roomId: number, callback: (error: any, result: RoomPlaylist[]) => void) {
+        this.roomPlaylistRepository.findByRoomId(roomId,callback);
     }
 
 }

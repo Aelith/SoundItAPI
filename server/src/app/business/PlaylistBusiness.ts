@@ -18,6 +18,7 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
         super(Playlist);
         this.playlistRepository = new PlaylistRepository();
         this.playlistSongRepository= new PlaylistSongRepository();
+        this.playlistTypeRepository= new PlaylistTypeRepository();
     }
 
     create (item: Playlist, callback: (error: any, result: any) => void) {
