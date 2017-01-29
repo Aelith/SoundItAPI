@@ -6,6 +6,7 @@
 import DataAccessPostgres = require("../../dataAccess/postgres/DataAccessPostgres");
 import BaseRepository = require("./BaseRepository");
 import {Playlist} from "../../model/postgres/Playlist";
+import {User} from "../../model/postgres/User";
 
 
 enum Property {
@@ -283,6 +284,55 @@ class PlaylistRepository extends BaseRepository<Playlist> {
         QB
             .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
+            .getMany()
+            .then((result) => {
+                callback(null, result);
+            })
+            .catch(e => {
+                callback(e, null);
+            });
+    }
+
+
+    /**
+     * Find Unused Playlists
+     */
+
+    /**
+     * Retrieve unset playlists by user id
+     * @param idUser
+     * @param callback
+     */
+    findUnusedByUserId (idUser: number, callback: (error: any, result: any) => any) {
+
+        // let sql = DataAccessPostgres.connect()
+        //     .getRepository(User)
+        //     .createQueryBuilder(User.getTableName())
+        //     .leftJoin("\"" + User.getTableName() + "\".roomTemplates", "roomTemplates")
+        //     .leftJoin("roomTemplates.rooms", "rooms")
+        //     .leftJoin("rooms.roomPlaylists", "roomPlaylists")
+        //     .where("rooms.deleted = :deleted", {deleted: false})
+        //     .andWhere("rooms.active = :active", {active: true})
+        //     .andWhere("\"" + User.getTableName() + "\".id = :idU", {idU: idUser})
+        //     .getSql();
+
+        let sql =   'SELECT rp.playlist ' +
+                    'FROM "User" u ' +
+                    'LEFT JOIN "RoomTemplate" rt ON u.id = rt.user ' +
+                    'LEFT JOIN "Room" r ON rt.id = r."roomTemplate" ' +
+                    'LEFT JOIN "RoomPlaylist" rp ON r.id = rp.room ' +
+                    'WHERE r.active = true ' +
+                    'AND u.id = ' + idUser + ' ' +
+                    'AND r.deleted = false';
+
+        console.log(sql);
+
+        DataAccessPostgres.connect()
+            .getRepository(Playlist)
+            .createQueryBuilder(Playlist.getTableName())
+            .where("\"" + Playlist.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("\"" + Playlist.getTableName() + "\".user = :idU", {idU: idUser})
+            .andWhere("\"" + Playlist.getTableName() + "\".id NOT IN ("+ sql +")", {} )
             .getMany()
             .then((result) => {
                 callback(null, result);
