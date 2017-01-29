@@ -172,11 +172,6 @@ class RoomController  {
                                             event["description"] = events[i].description;
                                             event["date"] = events[i].eventDate;
 
-                                            for(let j = 0; j < events[i].tags.length; j++)
-                                            {
-                                                tagResponse += events[i].tags[j].label + ',';
-                                            }
-
                                             eventsResponse.push(event);
                                         }
 
