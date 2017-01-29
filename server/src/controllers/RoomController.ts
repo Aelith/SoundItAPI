@@ -52,27 +52,31 @@ class RoomController  {
         try {
 
             new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
+                if (error) {
+                    logger.warn("RoomController.getRoomDetails -> findByLogin : error", error);
+                }
+                else {
+                    new RoomBusiness().findByUserId(result[0].id, (error, result) => {
+                        if (error) {
+                            logger.warn("RoomController.getRooms -> findById : error", error);
+                            res.status(400).send({"result": "Bad Request"});
+                        }
+                        else {
 
-                new RoomBusiness().findByUserId(result[0].id, (error, result) => {
-                    if (error) {
-                        logger.warn("RoomController.getRooms -> findById : error", error);
-                        res.status(400).send({"result": "Bad Request"});
-                    }
-                    else {
+                            var rooms = [];
 
-                        var rooms = [];
+                            // for (var i = 0; i < result.length; i++) {
+                            //     var object = {};
+                            //     object["id"] = result[i].id;
+                            //     object["name"] = result[i].name;
+                            //     object["description"] = result[i].description;
+                            //     rooms.push(object);
+                            // }
 
-                        // for (var i = 0; i < result.length; i++) {
-                        //     var object = {};
-                        //     object["id"] = result[i].id;
-                        //     object["name"] = result[i].name;
-                        //     object["description"] = result[i].description;
-                        //     rooms.push(object);
-                        // }
-
-                        res.json(rooms);
-                    }
-                });
+                            res.json(rooms);
+                        }
+                    });
+                }
             });
         }
         catch (e)  {
