@@ -166,7 +166,7 @@ class UserController implements IBaseController <UserBusiness> {
             }
             else
             {
-                if (req.body.login == result[0].login && req.body.password == result[0].password) {
+                if (req.body.login == result.login && req.body.password == result.password) {
 
                     var token = LoginManager.getToken(req);
 
