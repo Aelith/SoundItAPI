@@ -47,8 +47,13 @@ class UserBusiness extends BaseBusiness<User> {
     getUserSettings (_id: string, callback: (error: any, result: any) => void) {
 
     }
+
     findByLogin (login: string, callback: (error: any, result: any) => void) {
         this._userRepository.findByLogin(login, callback);
+    }
+
+    findCompleteByLogin (login: string, callback: (error: any, result: any) => void) {
+        this._userRepository.findHydratedByLogin(login, callback);
     }
 }
 

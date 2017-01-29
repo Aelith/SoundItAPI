@@ -17,12 +17,14 @@ class EventRoutes {
 
         //Show events
         router.get("/events", controller.getEvents);
+        //Show all events
+        router.get("/events/all", controller.getAllEvents);
+        //Show event creation view
+        router.get("/event/create", controller.getCreationView);
         //Show event detail
         router.get("/event/:_eventId", controller.getEventDetails);
         //Show event edition view
         router.get("/event/:_eventId/edit", controller.getEditionView);
-        //Show event creation view
-        router.get("/event/create", controller.getCreationView);
 
         //Create event
         router.post("/event", controller.create);

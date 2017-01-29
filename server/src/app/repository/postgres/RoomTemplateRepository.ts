@@ -244,7 +244,7 @@ class RoomTemplateRepository extends BaseRepository<RoomTemplate> {
             .createQueryBuilder(RoomTemplate.getTableName())
             .where("\"" + RoomTemplate.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + RoomTemplate.getTableName() + "\".user = :user", {user: userId})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -268,7 +268,7 @@ class RoomTemplateRepository extends BaseRepository<RoomTemplate> {
             .leftJoinAndSelect(RoomTemplate.getTableName() + ".rooms", "rooms")
             .where("\"" + RoomTemplate.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + RoomTemplate.getTableName() + "\".user = :user", {user: userId})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })
@@ -342,7 +342,7 @@ class RoomTemplateRepository extends BaseRepository<RoomTemplate> {
         QB
             .where("\"" + RoomTemplate.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + RoomTemplate.getTableName() + "\".user = :user", {user: userId})
-            .getMany()
+            .getOne()
             .then((result) => {
                 callback(null, result);
             })

@@ -16,7 +16,8 @@ enum Property {
     SubscriptionPackages,
     SubscriptionPackageState,
     SubscriptionPackageDetail,
-    Tax
+    Tax,
+    RoomTemplate
 }
 
 class UserRepository extends BaseRepository<User> {
@@ -53,6 +54,7 @@ class UserRepository extends BaseRepository<User> {
             .leftJoinAndSelect("subscriptionPackages.subscriptionPackageState", "subscriptionPackageState")
             .leftJoinAndSelect("subscriptionPackages.subscriptionPackageDetail", "subscriptionPackageDetail")
             .leftJoinAndSelect("subscriptionPackageDetail.tax", "tax")
+            .leftJoinAndSelect(User.getTableName() + ".roomTemplates", "roomTemplates")
             .where("\"" + User.getTableName() + "\".deleted = :deleted", {deleted: false})
             .getMany()
             .then((result) => {
@@ -83,6 +85,9 @@ class UserRepository extends BaseRepository<User> {
         }
         if (fields.indexOf(Property.UseRights) > -1 ) {
             QB.leftJoinAndSelect(User.getTableName() + ".userRights", "userRights");
+        }
+        if (fields.indexOf(Property.RoomTemplate) > -1) {
+            QB.leftJoinAndSelect(User.getTableName() + ".roomTemplates", "roomTemplates");
         }
 
 
@@ -169,6 +174,7 @@ class UserRepository extends BaseRepository<User> {
             .leftJoinAndSelect("subscriptionPackages.subscriptionPackageState", "subscriptionPackageState")
             .leftJoinAndSelect("subscriptionPackages.subscriptionPackageDetail", "subscriptionPackageDetail")
             .leftJoinAndSelect("subscriptionPackageDetail.tax", "tax")
+            .leftJoinAndSelect(User.getTableName() + ".roomTemplates", "roomTemplates")
             .where("\"" + User.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + User.getTableName() + "\".id = :idU", {idU: idUser})
             .getMany()
@@ -201,6 +207,9 @@ class UserRepository extends BaseRepository<User> {
         }
         if (fields.indexOf(Property.UseRights) > -1 ) {
             QB.leftJoinAndSelect(User.getTableName() + ".userRights", "userRights");
+        }
+        if (fields.indexOf(Property.RoomTemplate) > -1) {
+            QB.leftJoinAndSelect(User.getTableName() + ".roomTemplates", "roomTemplates");
         }
 
 
@@ -311,6 +320,7 @@ class UserRepository extends BaseRepository<User> {
             .leftJoinAndSelect("subscriptionPackages.subscriptionPackageState", "subscriptionPackageState")
             .leftJoinAndSelect("subscriptionPackages.subscriptionPackageDetail", "subscriptionPackageDetail")
             .leftJoinAndSelect("subscriptionPackageDetail.tax", "tax")
+            .leftJoinAndSelect(User.getTableName() + ".roomTemplates", "roomTemplates")
             .where("\"" + User.getTableName() + "\".deleted = :deleted", {deleted: false})
             .andWhere("\"" + User.getTableName() + "\".login = :login", {login: login})
             .getOne()
@@ -343,6 +353,9 @@ class UserRepository extends BaseRepository<User> {
         }
         if (fields.indexOf(Property.UseRights) > -1 ) {
             QB.leftJoinAndSelect(User.getTableName() + ".userRights", "userRights");
+        }
+        if (fields.indexOf(Property.RoomTemplate) > -1) {
+            QB.leftJoinAndSelect(User.getTableName() + ".roomTemplates", "roomTemplates");
         }
 
 
