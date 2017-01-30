@@ -282,9 +282,10 @@ class RoomController  {
     create(req: express.Request, res: express.Response): void {
         
         if (TypeChecker.isString(req.body.description) == false
-            || TypeChecker.isString(req.body.tags) == false 
-            || TypeChecker.isArray(req.body.playlists) == false 
-            )
+            || TypeChecker.isString(req.body.tags) == false
+            || TypeChecker.isString(req.body.name) == false
+            || TypeChecker.isArray(req.body.playlists) == false
+        )
         {
             logger.warn("RoomController -> create : error", {"error": new Error("Invalid body. Found : " + typeof req.body)});
             res.status(400).send({"result": "Bad Request"});
@@ -317,7 +318,7 @@ class RoomController  {
                     newRoom.description = req.body.description;
                     newRoom.active = true;
                     newRoom.state = newRoom.active;
-                    newRoom.label = result.roomTemplates[0].name + "_" + new Date().getTime();
+                    newRoom.label = req.body.name; //result.roomTemplates[0].name + "_" + new Date().getTime();
 
 
                     // Default prototype values

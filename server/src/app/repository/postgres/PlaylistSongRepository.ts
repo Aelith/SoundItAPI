@@ -144,22 +144,15 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
 
     deleteByIds(playlistId: number, songId: number, callback: (error: any, result: any) => any){
 
+        let sql = 'DELETE FROM "PlaylistSong" ps WHERE ps.playlist = ' + playlistId + ' AND ps.song = ' +  songId + ';';
+
         DataAccessPostgres.connect()
             .getRepository(PlaylistSong)
-            .findOne({playlist:playlistId, song:songId})
-            .then(entityToDelete => {
-                DataAccessPostgres.connect()
-                    .getRepository(PlaylistSong)
-                    .remove(entityToDelete)
-                    .then( (entity) => {
-                        callback(null, true);
-                    })
-                    .catch(e => {
-                        callback(e, null);
-                    });
+            .query(sql)
+            .then((result) => {
+                callback(null, result);
             })
             .catch(e => {
-                console.log(e);
                 callback(e, null);
             });
     }
