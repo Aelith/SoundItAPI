@@ -29,7 +29,7 @@ class RoomBusiness extends BaseBusiness<Room> {
     }
 
     retrieve (callback: (error: any, result: any) => void) {
-        this.roomRepository.retrieve(callback);
+        this.roomRepository.retrieveHydrated(callback);
     }
 
     update (item: Room, callback: (error: any, result: any) => void) {
@@ -71,6 +71,7 @@ class RoomBusiness extends BaseBusiness<Room> {
                 [RoomRepository.eProperty.RoomPlaylistPlaylistType,
                 RoomRepository.eProperty.RoomPlaylistPlaylist,
                 RoomRepository.eProperty.RoomTemplateTag,
+                RoomRepository.eProperty.PlaylistPlaylistType,
                 RoomRepository.eProperty.RoomUserUser,
                 RoomRepository.eProperty.Tags],
             callback);

@@ -213,7 +213,53 @@ class RoomController  {
 
     //Show room playlist
     getRoomPlaylist(req: express.Request, res: express.Response): void {
-        //TODO
+
+        if (TypeChecker.isNumber(req.params._roomId) == false)
+        {
+            logger.warn("getRoomPlaylist : error", {"error": new Error("Invalid body. Found : " + typeof req.params)});
+            res.status(400).send({"result": "Bad Request"});
+        }
+
+        let roomId = req.params._roomId;
+        let playlist : Playlist = null;
+        let room : Room;
+
+        let RB = new RoomBusiness();
+
+        RB.findHydratedById(roomId,(error, result) => {
+            if (error) {
+                logger.warn("RoomController.getRoomPlaylist -> room findHydratedById : error", error);
+                res.status(400).send({"result": "Bad Request"});
+            }
+            else
+            {
+                room = result;
+
+                new PlaylistBusiness().getPlaylistTypeById(1, (error, result) => {
+                    if (error) {
+                        logger.warn("RoomController.getRoomPlaylist -> getPlaylistTypeById : error", error);
+                        res.status(400).send({"result": "Bad Request"});
+                    }
+                    else
+                    {
+                        console.log(room);
+
+                        for (let i = 0; i < room.roomPlaylists.length; i++) {
+                            if (room.roomPlaylists[i].playlistType.id == result.id) {
+                                playlist = room.roomPlaylists[i].playlist;
+                            }
+                        }
+
+                        if (playlist == null) {
+                            logger.warn("RoomController.getRoomPlaylist -> getPlaylistTypeById playlist == null : error", error);
+                            res.status(400).send({"result": "Bad Request"});
+                        }
+
+                        res.status(200).send(playlist);
+                    }
+                });
+            }
+        });
     }
 
     getTemplateEditionView(req: express.Request, res: express.Response): void {
@@ -224,9 +270,7 @@ class RoomController  {
     getSongSubmissionView(req: express.Request, res: express.Response): void {
         //TODO
     }
-
     
-
     //Create a song submission
     submitSong(req: express.Request, res: express.Response): void {
         //TODO
