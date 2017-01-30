@@ -81,14 +81,7 @@ class RoomBusiness extends BaseBusiness<Room> {
     }
 
     findByUserId(_id: number, callback: (error: any, result: Room[]) => void) {
-        this.roomRepository.findCustomHydratedByUser(_id,
-            [RoomRepository.eProperty.RoomPlaylistPlaylistType,
-                RoomRepository.eProperty.RoomPlaylistPlaylist,
-                RoomRepository.eProperty.RoomTemplateTag,
-                RoomRepository.eProperty.RoomUserUser,
-                RoomRepository.eProperty.Tags,
-                RoomRepository.eProperty.RoomTemplate],
-            callback);
+        this.roomRepository.findHydratedByUser(_id,callback);
     }
 
     getRoomPlaylistByRoomId(roomId: number, callback: (error: any, result: RoomPlaylist[]) => void) {
