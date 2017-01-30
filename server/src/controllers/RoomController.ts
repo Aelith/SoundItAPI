@@ -244,8 +244,6 @@ class RoomController  {
                     }
                     else
                     {
-                        console.log(room);
-
                         for (let i = 0; i < room.roomPlaylists.length; i++) {
                             if (room.roomPlaylists[i].playlistType.id == result.id) {
                                 playlist = room.roomPlaylists[i].playlist;
