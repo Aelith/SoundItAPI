@@ -19,6 +19,8 @@ import {Song} from "../app/model/postgres/Song";
 import SongSourceBusiness = require("../app/business/SongSourceBusiness");
 import PlaylistSongBusiness = require("../app/business/PlaylistSongBusiness");
 import TypeChecker = require("../tools/TypeChecker");
+import RoomBusiness = require("../app/business/RoomBusiness");
+import {Room} from "../app/model/postgres/Room";
 
 
 class PlaylistController {
@@ -57,6 +59,40 @@ class PlaylistController {
         }
         catch (e)  {
             logger.error("PlaylistController.getPlaylists : error", e);
+            res.status(400).send({"result": "Bad Request"});
+        }
+    }
+
+    getPlaylistsUnused(req: express.Request, res: express.Response): void {
+        try
+        {
+            new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
+
+                new PlaylistBusiness().findUnusedByUserId(result.id, (error, result) => {
+                    if (error) {
+                        logger.warn("PlaylistController.getPlaylistsUnused -> findUnusedByUserId : error", error);
+                        res.status(400).send({"result": "Bad Request"});
+                    }
+                    else
+                    {
+                        let playlists = [];
+
+                        for(let i = 0; i < result.length; i++)
+                        {
+                            let playlist = {};
+                            playlist["id"] = result[i].id;
+                            playlist["name"] = result[i].name;
+                            playlist["description"] = result[i].description;
+                            playlists.push(playlist);
+                        }
+
+                        res.status(200).send(playlists);
+                    }
+                });
+            });
+        }
+        catch (e)  {
+            logger.error("PlaylistController.getPlaylistsUnused : error", e);
             res.status(400).send({"result": "Bad Request"});
         }
     }

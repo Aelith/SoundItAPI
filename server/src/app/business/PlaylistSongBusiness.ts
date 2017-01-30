@@ -5,6 +5,7 @@
 import PlaylistSongRepository = require("../repository/postgres/PlaylistSongRepository");
 import BaseBusiness = require("./interfaces/BaseBusiness");
 import {PlaylistSong} from "../model/postgres/PlaylistSong";
+import logger = require("../../tools/Logger");
 
 class PlaylistSongBusiness extends BaseBusiness<PlaylistSong> {
 
@@ -24,8 +25,19 @@ class PlaylistSongBusiness extends BaseBusiness<PlaylistSong> {
     }
 
     update (item: PlaylistSong, callback: (error: any, result: any) => void) {
-        //TODO
-        this.playlistSongRepository.update(item, callback);
+        let PS = item;
+
+        this.playlistSongRepository.deleteByIds(item.playlist.id, item.song.id,(error, result) => {
+            if(error)
+            {
+                logger.warn("PlaylistSongBusiness.update -> delete playlistsong : error", error);
+            }
+            else
+            {
+                this.playlistSongRepository.create(PS, callback);
+            }
+        });
+
     }
 
     delete(item: PlaylistSong, callback: (error: any, result: any) => void){
@@ -37,8 +49,13 @@ class PlaylistSongBusiness extends BaseBusiness<PlaylistSong> {
     }
 
     findByIds(idPlaylist: number,idSong: number, callback: (error: any, result: any) => void){
-        this.playlistSongRepository.findByIds(idPlaylist,idSong,callback);
+        this.playlistSongRepository.findHydratedByIds(idPlaylist,idSong,callback);
     }
+
+    getNextSongByWeight(id: number, callback : (error : any, result:any) => void) {
+        this.playlistSongRepository.findNextSongForPlaylist(id,callback);
+    }
+
 }
 
 Object.seal(PlaylistSongBusiness);

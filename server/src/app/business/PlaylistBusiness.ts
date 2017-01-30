@@ -45,6 +45,10 @@ class PlaylistBusiness extends BaseBusiness<Playlist> {
         this.playlistRepository.findByUserId(id,callback);
     }
 
+    findUnusedByUserId(id: number, callback: (error: any, result: any) => void){
+        this.playlistRepository.findUnusedByUserId(id,callback);
+    }
+
     getPlaylistTypeById(id: number, callback : (error : any, result:any) => void) {
         this.playlistTypeRepository.findById(id,callback);
     }

@@ -24,6 +24,9 @@ class PlaylistRoutes {
         //Show playlist rate view
         router.get("/playlist/:_playlistId/rate/create", controller.getRateView);
 
+        //Show playlists unused
+        router.get("/playlists/unused", controller.getPlaylistsUnused);
+
         //Show playlists
         router.get("/playlists", controller.getPlaylists);
         //Show playlist details

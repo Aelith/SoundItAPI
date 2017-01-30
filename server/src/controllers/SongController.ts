@@ -11,7 +11,7 @@ import PlaylistBusiness = require("../app/business/PlaylistBusiness");
 import RoomBusiness = require("../app/business/RoomBusiness");
 import {Playlist} from "../app/model/postgres/Playlist";
 import {Room} from "../app/model/postgres/Room";
-import {PlaylistType} from "../app/model/postgres/PlaylistType";
+import PlaylistSongBusiness = require("../app/business/PlaylistSongBusiness");
 
 
 class SongController  {
@@ -40,16 +40,13 @@ class SongController  {
 
     getNextSong (req: express.Request, res: express.Response): void {
 
-        if (TypeChecker.isNumber(req.params.roomId) == false
-            || TypeChecker.isNumber(req.params.currentSongId) == false
-        )
+        if (TypeChecker.isNumber(req.params.roomId) == false)
         {
             logger.warn("getNextSong : error", {"error": new Error("Invalid body. Found : " + typeof req.params)});
             res.status(400).send({"result": "Bad Request"});
         }
 
         let roomId = req.params.roomId;
-        let currentSongId = req.params.currentSongId;
         let playlist : Playlist = null;
         let room : Room;
 
@@ -60,7 +57,8 @@ class SongController  {
                 logger.warn("SongController.getNextSong -> room findHydratedById : error", error);
                 res.status(400).send({"result": "Bad Request"});
             }
-            else {
+            else
+            {
                 room = result;
 
                 new PlaylistBusiness().getPlaylistTypeById(1, (error, result) => {
@@ -70,58 +68,42 @@ class SongController  {
                     }
                     else
                     {
-                        for (let i = 0; i < room.roomPlaylists.length; i++) {
-                            if (room.roomPlaylists[i].playlist.playlistType.id == result.id) {
+                        for (let i = 0; i < room.roomPlaylists.length; i++)
+                        {
+                            if (room.roomPlaylists[i].playlistType.id == result.id)
+                            {
                                 playlist = room.roomPlaylists[i].playlist;
                             }
                         }
 
-                        if (playlist == null) {
+                        if (playlist == null)
+                        {
                             logger.warn("SongController.getNextSong -> getPlaylistTypeById playlist == null : error", error);
                             res.status(400).send({"result": "Bad Request"});
                         }
 
-                        let ranks = [];
-                        ranks = playlist.songRank.split(',');
-
-                        let nextIndex: number = 0;
-
-                        for(let i = 0; i < ranks.length; i++)
-                        {
-                            if(ranks[i] == currentSongId)
-                            {
-                                nextIndex = i + 1;
+                        new PlaylistSongBusiness().getNextSongByWeight(playlist.id,(error, result) => {
+                            if (error) {
+                                logger.warn("SongController.getNextSong -> getNextSongByWeight : error", error);
+                                res.status(400).send({"result": "Bad Request"});
                             }
-                        }
+                            else
+                            {
+                                let song = {};
+                                song["id"] = result.id;
+                                song["album"] = result.album;
+                                song["duration"] = result.duration;
+                                song["stream"] = result.stream;
+                                song["title"] = result.title;
+                                song["connector"] = result.songSource.label;
 
-                        if (nextIndex >= 0 && nextIndex <= ranks.length - 1) {
-                            new SongBusiness().findById(ranks[nextIndex], (error, result) => {
-                                if (error) {
-                                    logger.warn("SongController.getNextSong -> song findById : error", error);
-                                    res.status(400).send({"result": "Bad Request"});
-                                }
-                                else {
-                                    res.status(200).send(result);
-                                }
-                            });
-                        }
-                        else
-                        {
-                            new SongBusiness().findById(ranks[0], (error, result) => {
-                                if (error) {
-                                    logger.warn("SongController.getNextSong -> song findById : error", error);
-                                    res.status(400).send({"result": "Bad Request"});
-                                }
-                                else {
-                                    res.status(200).send(result);
-                                }
-                            });
-                        }
+                                res.status(200).send(song);
+                            }
+                        });
                     }
                 });
             }
         });
     }
-
 }
 export = SongController;

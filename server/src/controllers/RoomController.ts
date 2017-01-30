@@ -159,7 +159,7 @@ class RoomController  {
                                             playlist["id"] = room.roomPlaylists[i].playlist.id;
                                             playlist["name"] = room.roomPlaylists[i].playlist.name;
                                             playlist["description"] = room.roomPlaylists[i].playlist.description;
-                                            playlist["type"] = room.roomPlaylists[i].playlist.playlistType.label;
+                                            playlist["type"] = room.roomPlaylists[i].playlistType.label;
 
                                             playlistsResponse.push(playlist);
                                         }
