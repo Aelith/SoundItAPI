@@ -26,7 +26,7 @@ class SongRoutes {
         router.get("/song/:songId", controller.getDetails);
 
         //Get room next song
-        router.get("/nextSong/:roomId/:currentSongId", controller.getNextSong);
+        router.get("/nextSong/:roomId", controller.getNextSong);
 
         return router;
     }

@@ -12,6 +12,7 @@ import RoomBusiness = require("../app/business/RoomBusiness");
 import {Playlist} from "../app/model/postgres/Playlist";
 import {Room} from "../app/model/postgres/Room";
 import PlaylistSongBusiness = require("../app/business/PlaylistSongBusiness");
+import SongSourceBusiness = require("../app/business/SongSourceBusiness");
 
 
 class SongController  {
@@ -53,7 +54,8 @@ class SongController  {
         let RB = new RoomBusiness();
 
         RB.findHydratedById(roomId,(error, result) => {
-            if (error) {
+            if (error)
+            {
                 logger.warn("SongController.getNextSong -> room findHydratedById : error", error);
                 res.status(400).send({"result": "Bad Request"});
             }
@@ -62,7 +64,8 @@ class SongController  {
                 room = result;
 
                 new PlaylistBusiness().getPlaylistTypeById(1, (error, result) => {
-                    if (error) {
+                    if (error)
+                    {
                         logger.warn("SongController.getNextSong -> getPlaylistTypeById : error", error);
                         res.status(400).send({"result": "Bad Request"});
                     }
@@ -83,19 +86,32 @@ class SongController  {
                         }
 
                         new PlaylistSongBusiness().getNextSongByWeight(playlist.id,(error, result) => {
-                            if (error) {
+                            if (error)
+                            {
                                 logger.warn("SongController.getNextSong -> getNextSongByWeight : error", error);
                                 res.status(400).send({"result": "Bad Request"});
                             }
                             else
                             {
                                 let song = {};
-                                song["id"] = result.id;
-                                song["album"] = result.album;
-                                song["duration"] = result.duration;
-                                song["stream"] = result.stream;
-                                song["title"] = result.title;
-                                song["connector"] = result.songSource.label;
+                                song["id"] = result.song.id;
+                                song["album"] = result.song.album;
+                                song["duration"] = result.song.duration;
+                                song["stream"] = result.song.stream;
+                                song["title"] = result.song.title;
+
+                                // new SongBusiness().findById(result.song.id,(error, result) => {
+                                //     if (error)
+                                //     {
+                                //         logger.warn("SongController.getNextSong -> findById : error", error);
+                                //         res.status(400).send({"result": "Bad Request"});
+                                //     }
+                                //     else
+                                //     {
+                                //         console.log(result);
+                                //         // song["connector"] = result.;
+                                //     }
+                                // });
 
                                 res.status(200).send(song);
                             }

@@ -37,7 +37,6 @@ class PlaylistSongBusiness extends BaseBusiness<PlaylistSong> {
                 this.playlistSongRepository.create(PS, callback);
             }
         });
-
     }
 
     delete(item: PlaylistSong, callback: (error: any, result: any) => void){

@@ -148,7 +148,6 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
             .getRepository(PlaylistSong)
             .findOne({playlist:playlistId, song:songId})
             .then(entityToDelete => {
-                console.log(entityToDelete);
                 DataAccessPostgres.connect()
                     .getRepository(PlaylistSong)
                     .remove(entityToDelete)

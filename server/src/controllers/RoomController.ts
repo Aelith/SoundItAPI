@@ -48,36 +48,35 @@ class RoomController  {
 
     //Show rooms
     getRooms(req: express.Request, res: express.Response): void {
-        //TODO
         try {
 
-            new UserBusiness().findByLogin(res.locals.userToken.login, (error, result) => {
-                if (error) {
-                    logger.warn("RoomController.getRoomDetails -> findByLogin : error", error);
+            new RoomBusiness().retrieve((error, result) => {
+                if (error)
+                {
+                    logger.warn("RoomController.getRooms -> findById : error", error);
+                    res.status(400).send({"result": "Bad Request"});
                 }
-                else {
-                    new RoomBusiness().findByUserId(result[0].id, (error, result) => {
-                        if (error) {
-                            logger.warn("RoomController.getRooms -> findById : error", error);
-                            res.status(400).send({"result": "Bad Request"});
-                        }
-                        else {
+                else
+                {
 
-                            var rooms = [];
+                    var rooms = [];
 
-                            // for (var i = 0; i < result.length; i++) {
-                            //     var object = {};
-                            //     object["id"] = result[i].id;
-                            //     object["name"] = result[i].name;
-                            //     object["description"] = result[i].description;
-                            //     rooms.push(object);
-                            // }
+                    for (var i = 0; i < result.length; i++)
+                    {
+                        var object = {};
+                        object["id"] = result[i].id;
+                        object["name"] = result[i].name;
+                        object["description"] = result[i].description;
+                        object["tags"] = result[i].tags;
+                        object["businessName"] = result[i].roomTemplate.name;
 
-                            res.json(rooms);
-                        }
-                    });
+                        rooms.push(object);
+                    }
+
+                    res.status(200).send(rooms);
                 }
             });
+
         }
         catch (e)  {
             logger.error("RoomController.getRooms : error", e);
