@@ -190,7 +190,7 @@ class RoomController  {
 
                                         response["id"] = room.id;
                                         response["name"] = room.label;
-                                        response["description"] = roomTemplate.description + " - " + room.description;
+                                        response["description"] = room.description;
                                         response["tags"] = tagResponse;
                                         response["playlists"] = playlistsResponse;
                                         response["events"] = eventsResponse;
