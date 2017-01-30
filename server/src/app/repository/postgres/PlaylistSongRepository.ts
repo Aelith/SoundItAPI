@@ -142,6 +142,28 @@ class PlaylistSongRepository extends BaseRepository<PlaylistSong> {
     }
 
 
+    deleteByIds(playlistId: number, songId: number, callback: (error: any, result: any) => any){
+
+        DataAccessPostgres.connect()
+            .getRepository(PlaylistSong)
+            .findOne({playlist:playlistId, song:songId})
+            .then(entityToDelete => {
+                console.log(entityToDelete);
+                DataAccessPostgres.connect()
+                    .getRepository(PlaylistSong)
+                    .remove(entityToDelete)
+                    .then( (entity) => {
+                        callback(null, true);
+                    })
+                    .catch(e => {
+                        callback(e, null);
+                    });
+            })
+            .catch(e => {
+                console.log(e);
+                callback(e, null);
+            });
+    }
 
     findNextSongForPlaylist(idPlaylist: number, callback: (error: any, result: any) => any){
 
