@@ -67,7 +67,7 @@ class RoomController  {
                         {
                             var object = {};
                             object["id"] = result[i].id;
-                            object["name"] = result[i].name;
+                            object["name"] = result[i].label;
                             object["description"] = result[i].description;
                             object["tags"] = result[i].tags;
                             object["businessName"] = result[i].roomTemplate.name;
