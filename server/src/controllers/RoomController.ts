@@ -268,6 +268,7 @@ class RoomController  {
                                 {
                                     let song = {};
                                     song["name"] = result.playlistSongs[i].song.title;
+                                    song["id"] = result.playlistSongs[i].song.id;
                                     song["weight"] = result.playlistSongs[i].weight;
                                     song["artist"] = result.playlistSongs[i].song.artist;
 
