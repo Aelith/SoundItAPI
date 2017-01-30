@@ -37,6 +37,9 @@ class PlaylistRoutes {
         //Rate a playlist
         router.post("/playlist/:_playlistId/rate", controller.rate);
 
+        //Rate a song playlist
+        router.post("/room/rateSong", controller.rateSong);
+
         //Update a playlist
         router.put("/playlist/:_playlistId", controller.update);
 

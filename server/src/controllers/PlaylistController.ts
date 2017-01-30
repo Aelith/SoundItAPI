@@ -259,6 +259,120 @@ class PlaylistController {
         //TODO
     }
 
+    //Rate a playlist song
+    rateSong(req: express.Request, res: express.Response): void {
+        try {
+
+            if (TypeChecker.isNumber(req.body.roomId) == false
+                || TypeChecker.isNumber(req.body.songId) == false
+                || TypeChecker.isNumber(req.body.rate) == false
+            )
+            {
+                logger.warn("getEventDetails : error", {"error": new Error("Invalid body. Found : " + typeof req.body)});
+            }
+
+            let room: Room;
+            let playlist: Playlist = null;
+            let song: Song = null;
+            let playlistSong: PlaylistSong = null;
+
+
+            if(req.body.rate == 1 || req.body.rate == -1)
+            {
+                new RoomBusiness().findHydratedById(req.body.roomId,(error, result) => {
+                    if (error)
+                    {
+                        logger.warn("SongController.rateSong -> room findHydratedById : error", error);
+                        res.status(400).send({"result": "Bad Request"});
+                    }
+                    else
+                    {
+                        room = result;
+
+                        new PlaylistBusiness().getPlaylistTypeById(1, (error, result) => {
+                            if (error)
+                            {
+                                logger.warn("SongController.rateSong -> getPlaylistTypeById : error", error);
+                                res.status(400).send({"result": "Bad Request"});
+                            }
+                            else
+                            {
+                                for (let i = 0; i < room.roomPlaylists.length; i++)
+                                {
+                                    if (room.roomPlaylists[i].playlistType.id == result.id)
+                                    {
+                                        playlist = room.roomPlaylists[i].playlist;
+                                    }
+                                }
+
+                                if (playlist == null)
+                                {
+                                    logger.warn("SongController.rateSong -> getPlaylistTypeById playlist == null : error", error);
+                                    res.status(400).send({"result": "Bad Request"});
+                                }
+
+                                new SongBusiness().findById(req.body.songId, (error, result) => {
+                                    if (error)
+                                    {
+                                        logger.warn("SongController.rateSong -> playlistSong findByIds : error", error);
+                                        res.status(400).send({"result": "Bad Request"});
+                                    }
+                                    else
+                                    {
+                                        song = result;
+
+                                        if (song == null)
+                                        {
+                                            logger.warn("SongController.rateSong -> findById song == null : error", error);
+                                            res.status(400).send({"result": "Bad Request"});
+                                        }
+
+                                        new PlaylistSongBusiness().findByIds(playlist.id, song.id, (error, result) => {
+                                            if (error)
+                                            {
+                                                logger.warn("SongController.rateSong -> playlistSong findByIds : error", error);
+                                                res.status(400).send({"result": "Bad Request"});
+                                            }
+                                            else
+                                            {
+                                                playlistSong = result;
+
+                                                playlistSong.weight += req.body.rate;
+                                                playlistSong.totalweight += req.body.rate;
+
+                                                new PlaylistSongBusiness().update(playlistSong, (error, result) => {
+                                                    if (error)
+                                                    {
+                                                        logger.warn("SongController.rateSong -> playlistSong update : error", error);
+                                                        res.status(400).send({"result": "Bad Request"});
+                                                    }
+                                                    else
+                                                    {
+                                                        res.status(200).send({"result": "Updated"});
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            else
+            {
+                logger.warn("PlaylistController.rateSong -> bad value : ", req.body.rate);
+                res.status(400).send({"result": "Bad Request"});
+            }
+
+        }
+        catch(error)
+        {
+
+        }
+    }
+
     //Update a playlist and all its sub elements
     update(req: express.Request, res: express.Response): void {
         try {
