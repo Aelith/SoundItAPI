@@ -293,10 +293,13 @@ class EventController {
                     EB.create(newEvent, (error, result) => {
                         if (error)
                         {
-                            logger.warn("create event : error", {"error": error});
+                            logger.warn("create event : error", {"error": error});;
+                            res.status(400).send({"result": "Bad Request"});
                         }
                         else
                         {
+
+                            res.status(200).send({"id": result.id});
                             newEvent = result;
 
 
@@ -367,7 +370,6 @@ class EventController {
                         }
                     });
 
-                    res.status(200).send({"result": "Updated"});
                 }
 
             });
