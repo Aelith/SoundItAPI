@@ -63,14 +63,17 @@ class RoomController  {
 
                     for (var i = 0; i < result.length; i++)
                     {
-                        var object = {};
-                        object["id"] = result[i].id;
-                        object["name"] = result[i].name;
-                        object["description"] = result[i].description;
-                        object["tags"] = result[i].tags;
-                        object["businessName"] = result[i].roomTemplate.name;
+                        if(result[i].active)
+                        {
+                            var object = {};
+                            object["id"] = result[i].id;
+                            object["name"] = result[i].name;
+                            object["description"] = result[i].description;
+                            object["tags"] = result[i].tags;
+                            object["businessName"] = result[i].roomTemplate.name;
 
-                        rooms.push(object);
+                            rooms.push(object);
+                        }
                     }
 
                     res.status(200).send(rooms);
