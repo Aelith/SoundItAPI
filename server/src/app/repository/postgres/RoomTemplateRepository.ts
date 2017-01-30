@@ -341,6 +341,7 @@ class RoomTemplateRepository extends BaseRepository<RoomTemplate> {
 
         QB
             .where("\"" + RoomTemplate.getTableName() + "\".deleted = :deleted", {deleted: false})
+            .andWhere("events.deleted = :deleted", {deleted: false})
             .andWhere("\"" + RoomTemplate.getTableName() + "\".user = :user", {user: userId})
             .getOne()
             .then((result) => {
