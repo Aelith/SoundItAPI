@@ -255,7 +255,30 @@ class RoomController  {
                             res.status(400).send({"result": "Bad Request"});
                         }
 
-                        res.status(200).send(playlist);
+                        new PlaylistBusiness().findById(playlist.id, (error, result) => {
+                            if (error) {
+                                logger.warn("RoomController.getRoomPlaylist -> getPlaylistTypeById : error", error);
+                                res.status(400).send({"result": "Bad Request"});
+                            }
+                            else
+                            {
+                                result["songs"] = [];
+
+                                for(let i = 0; i < result.playlistSongs.length; i++)
+                                {
+                                    let song = {};
+                                    song["name"] = result.playlistSongs[i].song.title;
+                                    song["weight"] = result.playlistSongs[i].weight;
+                                    song["artist"] = result.playlistSongs[i].song.artist;
+
+                                    result["songs"].push(song);
+                                }
+
+                                res.status(200).send(result);
+                            }
+                            });
+
+
                     }
                 });
             }
